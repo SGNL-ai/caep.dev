@@ -22,9 +22,7 @@ A Go library for implementing [Shared Signals Framework (SSF)](https://openid.gi
   - [Event Acknowledgment](#event-acknowledgment)
 - [Subject Management](#subject-management)
 - [Authorization](#authorization)
-- [Advanced Usage](#advanced-usage)
-  - [Custom Event Types](#custom-event-types)
-  - [Metrics and Monitoring](#metrics-and-monitoring)
+- [Custom Events](#custom-events)
 - [Best Practices](#best-practices)
 - [Contributing](#contributing)
 
@@ -426,9 +424,7 @@ func (a *CustomAuth) AddAuth(req *http.Request) error {
 customAuth := NewCustomAuth(...)
 ```
 
-## Advanced Usage
-
-### Custom Event Types
+## Custom Events
 
 ```go
 import (
