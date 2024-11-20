@@ -155,7 +155,7 @@ func main() {
     )
 
     for _, rawEvent := range events {
-        parsedEvent, err := secEventParser.ParseSingleEventSecEvent(rawEvent)
+        parsedEvent, err := secEventParser.ParseSecEvent(rawEvent)
         if err != nil {
             // Handle error
             
@@ -220,7 +220,7 @@ func main() {
 
     // Set up HTTP handler for events
     http.HandleFunc("/events", func(w http.ResponseWriter, r *http.Request) {
-        event, err := secEventParser.ParseSingleEventSecEvent(r.Body)
+        event, err := secEventParser.ParseSecEvent(r.Body)
         if err != nil {
             // Handle error
         }
@@ -314,7 +314,7 @@ secEventParser := secevent.NewParser(
 )
 
 for _, rawEvent := range events {
-    parsedEvent, err := secEventParser.ParseSingleEventSecEvent(rawEvent)
+    parsedEvent, err := secEventParser.ParseSecEvent(rawEvent)
     if err != nil {
         // Handle error
         continue
@@ -353,7 +353,7 @@ secEventParser := secevent.NewParser(
 // Set up HTTP handler for receiving push events
 http.HandleFunc("/events", func(w http.ResponseWriter, r *http.Request) {
     // Parse and validate the incoming SET
-    event, err := secEventParser.ParseSingleEventSecEvent(r.Body)
+    event, err := secEventParser.ParseSecEvent(r.Body)
     if err != nil {
         // Handle error
     }
