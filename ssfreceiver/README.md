@@ -413,17 +413,7 @@ type Authorizer interface {
     AddAuth(req *http.Request) error
 }
 
-// Built-in authorization methods
-type Bearer struct {
-    token string
-}
-
-type OAuth2ClientCredentials struct {
-    config OAuth2Config
-    tokenSource oauth2.TokenSource
-}
-
-// Usage examples:
+// Built-in authorization methods:
 // Bearer token
 bearerAuth := auth.NewBearer("token")
 
@@ -435,7 +425,7 @@ oauth2Auth := auth.NewOAuth2ClientCredentials(auth.OAuth2Config{
     Scopes:       []string{"scope1", "scope2"},
 })
 
-// Custom authorization implementation
+// Custom authorization implementation:
 type CustomAuth struct {
     // Custom auth fields
 }
