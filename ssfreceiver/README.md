@@ -43,7 +43,7 @@ This library requires:
 ## Installation
 
 ```bash
-go get github.com/cape.dev-receiver/ssfreceiver
+go get github.com/caep.dev-receiver/ssfreceiver
 ```
 
 ## Quick Start
@@ -56,7 +56,7 @@ First, set up your authorization method:
 package main
 
 import (
-    "github.com/cape.dev-receiver/ssfreceiver/auth"
+    "github.com/caep.dev-receiver/ssfreceiver/auth"
 )
 
 // Bearer token authentication
@@ -99,8 +99,8 @@ package main
 import (
     "context"
     "log"
-    "github.com/cape.dev-receiver/ssfreceiver/builder"
-    "github.com/cape.dev-receiver/ssfreceiver/options"
+    "github.com/caep.dev-receiver/ssfreceiver/builder"
+    "github.com/caep.dev-receiver/ssfreceiver/options"
     "github.com/sgnl-ai/caep.dev/secevent/pkg/subject"
     "github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep"
     "github.com/sgnl-ai/caep.dev/secevent/pkg/event"
@@ -186,7 +186,7 @@ package main
 import (
     "context"
     "net/http"
-    "github.com/cape.dev-receiver/ssfreceiver/builder"
+    "github.com/caep.dev-receiver/ssfreceiver/builder"
     "github.com/sgnl-ai/caep.dev/secevent/pkg/parser"
     "github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep"
 )
