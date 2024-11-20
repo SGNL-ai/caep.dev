@@ -18,8 +18,7 @@ A Go library for implementing [Shared Signals Framework (SSF)](https://openid.gi
   - [Stream Verification](#stream-verification)
 - [Event Handling](#event-handling)
   - [Polling Events](#polling-events)
-  - [Push Event Reception](#push-event-reception)
-  - [Event Acknowledgment](#event-acknowledgment)
+  - [Events Acknowledgment](#events-acknowledgment)
 - [Subject Management](#subject-management)
 - [Authorization](#authorization)
 - [Custom Events](#custom-events)
@@ -270,7 +269,7 @@ err := stream.UpdateConfig(ctx,
     options.WithDescription("Updated configuration"))
 ```
 
-### Stream Lifecycle
+### Stream Status
 ```go
 // Pause stream - temporarily stop receiving events
 err := stream.Pause(ctx, 
@@ -332,7 +331,7 @@ for _, rawEvent := range events {
 }
 ```
 
-### Event Acknowledgment
+### Events Acknowledgment
 ```go
 // Acknowledge specific events
 err := stream.Acknowledge(ctx, 
