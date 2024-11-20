@@ -19,6 +19,7 @@ A Go library for implementing [Shared Signals Framework (SSF)](https://openid.gi
 - [Event Handling](#event-handling)
   - [Polling Events](#polling-events)
   - [Events Acknowledgment](#events-acknowledgment)
+  - [Push Event Reception](#push-event-reception)
 - [Subject Management](#subject-management)
 - [Authorization](#authorization)
 - [Custom Events](#custom-events)
@@ -337,6 +338,38 @@ for _, rawEvent := range events {
 err := stream.Acknowledge(ctx, 
     []string{"jti1", "jti2"},
     options.WithAuth(customAuth))
+```
+
+### Push Event Reception
+
+```go
+// Set up secevent parser for handling incoming events
+secEventParser := secevent.NewParser(
+    parser.WithJWKSURL("https://issuer.example.com/jwks.json"),
+    parser.WithExpectedIssuer("https://issuer.example.com"),
+    parser.WithExpectedAudience("https://receiver.example.com"),
+)
+
+// Set up HTTP handler for receiving push events
+http.HandleFunc("/events", func(w http.ResponseWriter, r *http.Request) {
+    // Parse and validate the incoming SET
+    event, err := secEventParser.ParseSingleEventSecEvent(r.Body)
+    if err != nil {
+        // Handle error
+    }
+    
+    // Handle the event
+    switch event.Type() {
+    case caep.EventTypeSessionRevoked:
+        handleSessionRevoked(event)
+    case caep.EventTypeTokenClaimsChange:
+        handleTokenClaimsChange(event)
+    default:
+        handleUnknownEvent(event)
+    }
+
+    w.WriteHeader(http.StatusOK)
+})
 ```
 
 ## Subject Management
