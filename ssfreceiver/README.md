@@ -768,7 +768,7 @@ Complete interface for stream operations:
 ```go
 type Stream interface {
     // Get stream ID
-	GetStreamID() string
+    GetStreamID() string
 
     // Get transmitter metadata
     GetMetadata() *types.TransmitterMetadata
