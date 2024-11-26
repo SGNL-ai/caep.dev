@@ -346,7 +346,7 @@ if err != nil {
 updatedConfig := &types.StreamConfigurationRequest{
     StreamID: stream.GetStreamID(),
     Delivery: &types.DeliveryConfig{
-        Method:      types.DeliveryMethodPoll,
+        Method:      types.DeliveryMethodPush,
         EndpointURL: endpointURL,
     },
     EventsRequested: []event.EventType{
