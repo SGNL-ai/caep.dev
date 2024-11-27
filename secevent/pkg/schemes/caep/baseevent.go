@@ -3,7 +3,7 @@ package caep
 import (
 	"encoding/json"
 
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/event"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/event"
 )
 
 // CAEPEvent is the interface that all CAEP events must implement

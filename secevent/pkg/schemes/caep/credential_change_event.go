@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/event"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/event"
 )
 
 // CredentialType represents the type of credential

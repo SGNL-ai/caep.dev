@@ -1,7 +1,7 @@
 package caep
 
 import (
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/event"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/event"
 )
 
 // CAEP Event Types as defined in the OpenID Connect CAEP specification

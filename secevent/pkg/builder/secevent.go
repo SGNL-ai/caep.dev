@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/event"
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/subject"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/event"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/subject"
 )
 
 // MultiSecEvent represents a base Security Event Token that can contain multiple events

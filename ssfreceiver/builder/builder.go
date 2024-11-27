@@ -9,13 +9,13 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/event"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/auth"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/internal/config"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/internal/retry"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/internal/validation"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/stream"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/types"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/event"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/auth"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/internal/config"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/internal/retry"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/internal/validation"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/stream"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/types"
 )
 
 // StreamBuilder configures and creates SSF streams

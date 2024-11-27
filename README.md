@@ -1,56 +1,14 @@
-# A Shared Signals Framework Receiver in Go
+# caep.dev Libraries
 
-An open-source Go OpenID Shared Signals Framework Receiver.
+## [secevent](./secevent)
+A comprehensive Go library for building, signing, parsing, and validating Security Event Tokens (SETs) according to RFC 8417.
 
-## Using the caep.dev open source receiver
-To use this receiver:
+## [ssfreceiver](./ssfreceiver)
+A Go library for implementing Shared Signals Framework (SSF) receivers.
 
-### Step 1: Import
-simply add the following lines to your Go files:
+### [archive](./archive)
+Contains the original SSF receiver implementation. This has been superseded by the new ssfreceiver library and is maintained for historical reference only.
 
-~~~ go
-import {
-  "github.com/sgnl-ai/caep.dev-receiver/pkg"
-  "github.com/sgnl-ai/caep.dev-receiver/pkg/ssf_events"
-}
-~~~
+## Contributing
 
-### Step 2: Instantiate the Receiver
-
-~~~ go
-  // Configure the receiver (do not specify poll callback if polling is not required yet)
-  receiverConfig := pkg.ReceiverConfig{
-  	TransmitterUrl:     "<your transmitter url here>",
-  	TransmitterPollUrl: "<your transmitter poll url here>",
-  	EventsRequested:    []events.EventType{0},
-  	AuthorizationToken: "<your access token here>",
-  	PollCallback:       nil, // no polling
-  }
-  // Initialize the receiver but do not start polling
-  receiver, err := pkg.ConfigureSsfReceiver(receiverConfig)
-  if err != nil {
-  	print(err)
-  }
-
-~~~
-
-
-### Step 3: Poll Events on Demand
-
-~~~ go
-  events, err := receiver.PollEvents()
-  if err != nil {
-  	print(err)
-  }
-~~~
-
-### Step 4: Parse the Received Event
-Use the struct `SsfEvent` to parse events that you receive. For example:
-
-~~~ go
-  fmt.Printf("Subject Format: %v\n", event.GetSubjectFormat())
-  fmt.Printf("Subject: %v\n", event.GetSubject())
-  fmt.Printf("Timestamp: %d\n", event.GetTimestamp())
-~~~
-
-You can also configure the Receiver to periodically poll the Transmitter.
+Contributions to the project are welcome, including feature enhancements, bug fixes, and documentation improvements.

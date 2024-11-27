@@ -8,10 +8,10 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/subject"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/internal/retry"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/options"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/types"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/subject"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/internal/retry"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/options"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/types"
 )
 
 func (s *stream) GetConfiguration(ctx context.Context, opts ...options.Option) (*types.StreamConfiguration, error) {

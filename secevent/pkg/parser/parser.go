@@ -8,10 +8,10 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lestrrat-go/jwx/v2/jwk"
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/builder"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/builder"
 
-	_ "github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/schemes/caep" // Initialize CAEP events
-	_ "github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/schemes/ssf"  // Initialize SSF events
+	_ "github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep" // Initialize CAEP events
+	_ "github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/ssf"  // Initialize SSF events
 )
 
 // Parser parses and validates SecEvents

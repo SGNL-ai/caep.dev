@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/event"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/event"
 )
 
 // StringOrStringArray represents a value that can be either a single string or an array of strings

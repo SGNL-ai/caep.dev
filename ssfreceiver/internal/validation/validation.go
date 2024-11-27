@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/url"
 
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/event"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/types"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/event"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/types"
 )
 
 func ParseAndValidateURL(rawURL string) (*url.URL, error) {

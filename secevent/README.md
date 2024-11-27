@@ -36,7 +36,7 @@ A comprehensive Go library for building, signing, parsing, and validating Securi
 ## Installation
 
 ```bash
-go get github.com/sgnl-ai/caep.dev-receiver/secevent
+go get github.com/sgnl-ai/caep.dev/secevent
 ```
 
 ---
@@ -55,7 +55,7 @@ import (
     "fmt"
     "time"
 
-    "github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/schemes/caep"
+    "github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep"
     "github.com/sgnl-ai/caep.dev/secevent/pkg/builder"
     "github.com/sgnl-ai/caep.dev/secevent/pkg/signing"
     "github.com/sgnl-ai/caep.dev/secevent/pkg/subject"
@@ -180,8 +180,8 @@ SSF Events:
 package main
 
 import (
-    "github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/schemes/caep"
-    "github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/schemes/ssf"
+    "github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep"
+    "github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/ssf"
 )
 
 func main() {

@@ -1,7 +1,7 @@
 package builder
 
 import (
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/id"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/id"
 )
 
 // Builder provides configuration for creating SecEvents

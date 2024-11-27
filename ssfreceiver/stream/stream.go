@@ -4,11 +4,11 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/subject"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/auth"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/internal/config"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/options"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/types"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/subject"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/auth"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/internal/config"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/options"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/types"
 )
 
 // Stream represents an SSF stream

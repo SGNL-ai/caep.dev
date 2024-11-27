@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/event"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/auth"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/internal/config"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/internal/validation"
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/types"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/event"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/auth"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/internal/config"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/internal/validation"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/types"
 )
 
 // Option represents a builder option

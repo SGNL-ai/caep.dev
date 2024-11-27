@@ -112,9 +112,9 @@ import (
     "log"
     "github.com/caep.dev-receiver/ssfreceiver/builder"
     "github.com/caep.dev-receiver/ssfreceiver/options"
-    "github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/subject"
-    "github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/schemes/caep"
-    "github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/event"
+    "github.com/sgnl-ai/caep.dev/secevent/pkg/subject"
+    "github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep"
+    "github.com/sgnl-ai/caep.dev/secevent/pkg/event"
 )
 
 func main() {
@@ -197,8 +197,8 @@ import (
     "context"
     "net/http"
     "github.com/caep.dev-receiver/ssfreceiver/builder"
-    "github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/parser"
-    "github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/schemes/caep"
+    "github.com/sgnl-ai/caep.dev/secevent/pkg/parser"
+    "github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep"
 )
 
 func main() {
@@ -534,7 +534,7 @@ http.HandleFunc("/events", func(w http.ResponseWriter, r *http.Request) {
 Using secevent's subject package for subject creation and management:
 
 ```go
-import "github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/subject"
+import "github.com/sgnl-ai/caep.dev/secevent/pkg/subject"
 
 // Create various subject types using secevent
 emailSubject, err := subject.NewEmailSubject("user@example.com")

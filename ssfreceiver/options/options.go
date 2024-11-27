@@ -1,7 +1,7 @@
 package options
 
 import (
-	"github.com/sgnl-ai/caep.dev-receiver/ssfreceiver/auth"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/auth"
 )
 
 // OperationOptions holds common options for stream operations

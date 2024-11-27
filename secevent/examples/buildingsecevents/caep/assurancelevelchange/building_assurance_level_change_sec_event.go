@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/builder"
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/id"
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/schemes/caep"
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/signing"
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/subject"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/builder"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/id"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/signing"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/subject"
 )
 
 func main() {

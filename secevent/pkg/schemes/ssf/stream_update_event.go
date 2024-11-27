@@ -3,7 +3,7 @@ package ssf
 import (
 	"encoding/json"
 
-	"github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/event"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/event"
 )
 
 // StreamStatus represents the possible states of a stream

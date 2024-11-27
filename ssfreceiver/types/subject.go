@@ -1,6 +1,6 @@
 package types
 
-import "github.com/sgnl-ai/caep.dev-receiver/secevent/pkg/subject"
+import "github.com/sgnl-ai/caep.dev/secevent/pkg/subject"
 
 const (
 	DefaultSubjectsAll  = "ALL"
