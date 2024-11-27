@@ -1,0 +1,6 @@
+github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
+github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
+github.com/sgnl-ai/caep.dev/secevent v0.0.0-20241127224623-b39cacc1ffed h1:W0VMKz2hN18zkKqjlI/qvs6AfWiBuW4MeojNNZtfzDk=
+github.com/sgnl-ai/caep.dev/secevent v0.0.0-20241127224623-b39cacc1ffed/go.mod h1:6z8AjPTIJvHDx9R2QZkxqUkiydEajBSoZB1yVaQXBrc=
+golang.org/x/oauth2 v0.24.0 h1:KTBBxWqUa0ykRPLtV69rRto9TLXcqYkeswu48x/gvNE=
+golang.org/x/oauth2 v0.24.0/go.mod h1:XYTD2NtWslqkgxebSiOHnXEap4TF09sJSc7H1sXbhtI=
