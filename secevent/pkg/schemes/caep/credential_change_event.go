@@ -55,7 +55,7 @@ func NewCredentialChangeEvent(credType CredentialType, changeType ChangeType) *C
 		},
 	}
 
-	e.SetType(AssuranceLevelChange)
+	e.SetType(EventTypeAssuranceLevelChange)
 
 	return e
 }
@@ -103,6 +103,30 @@ func (e *CredentialChangeEvent) WithReasonUser(language, reason string) *Credent
 	return e
 }
 
+func (e *CredentialChangeEvent) GetCredentialType() CredentialType {
+	return e.CredentialType
+}
+
+func (e *CredentialChangeEvent) GetChangeType() ChangeType {
+	return e.ChangeType
+}
+
+func (e *CredentialChangeEvent) GetFriendlyName() *string {
+	return e.FriendlyName
+}
+
+func (e *CredentialChangeEvent) GetX509Issuer() *string {
+    return e.X509Issuer
+}
+
+func (e *CredentialChangeEvent) GetX509Serial() *string {
+    return e.X509Serial
+}
+
+func (e *CredentialChangeEvent) GetFIDO2AAGUID() *string {
+	return e.FIDO2AAGUID
+}
+
 func (e *CredentialChangeEvent) Validate() error {
 	if err := e.ValidateMetadata(); err != nil {
 		return err
@@ -111,20 +135,20 @@ func (e *CredentialChangeEvent) Validate() error {
 	if !IsValidCredentialType(e.CredentialType) {
 		return event.NewError(event.ErrCodeInvalidValue,
 			fmt.Sprintf("invalid credential type: %s", e.CredentialType),
-			"credential_type")
+			"credential_type", "")
 	}
 
 	if !IsValidChangeType(e.ChangeType) {
 		return event.NewError(event.ErrCodeInvalidValue,
 			fmt.Sprintf("invalid change type: %s", e.ChangeType),
-			"change_type")
+			"change_type", "")
 	}
 
 	if (e.X509Issuer != nil && e.X509Serial == nil) ||
 		(e.X509Issuer == nil && e.X509Serial != nil) {
 		return event.NewError(event.ErrCodeInvalidValue,
 			"both x509_issuer and x509_serial must be provided together",
-			"x509")
+			"x509", "")
 	}
 
 	return nil
@@ -158,10 +182,10 @@ func (e *CredentialChangeEvent) UnmarshalJSON(data []byte) error {
 
 	if err := json.Unmarshal(data, &payload); err != nil {
 		return event.NewError(event.ErrCodeParseError,
-			"failed to parse credential change event data", "")
+			"failed to parse credential change event data", "", err.Error())
 	}
 
-	e.SetType(AssuranceLevelChange)
+	e.SetType(EventTypeCredentialChange)
 
 	e.CredentialChangePayload = payload.CredentialChangePayload
 	e.Metadata = payload.EventMetadata
@@ -196,12 +220,12 @@ func ParseCredentialChangeEvent(data []byte) (event.Event, error) {
 	var e CredentialChangeEvent
 	if err := json.Unmarshal(data, &e); err != nil {
 		return nil, event.NewError(event.ErrCodeParseError,
-			"failed to parse credential change event", "")
+			"failed to parse credential change event", "", err.Error())
 	}
 
 	return &e, nil
 }
 
 func init() {
-	event.RegisterEventParser(CredentialChange, ParseCredentialChangeEvent)
+	event.RegisterEventParser(EventTypeCredentialChange, ParseCredentialChangeEvent)
 }

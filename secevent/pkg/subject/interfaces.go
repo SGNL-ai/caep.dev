@@ -46,6 +46,8 @@ type Subject interface {
 	json.Marshaler
 	// UnmarshalJSON implements the json.Unmarshaler interface
 	json.Unmarshaler
+	// Payload returns the subject's payload as a map[string]interface{}
+	Payload() (map[string]interface{}, error)
 }
 
 // SimpleSubject represents a subject identified by a single type of identifier

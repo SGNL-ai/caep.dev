@@ -14,7 +14,7 @@ type SessionRevokedEvent struct {
 func NewSessionRevokedEvent() *SessionRevokedEvent {
 	e := &SessionRevokedEvent{}
 
-	e.SetType(SessionRevoked)
+	e.SetType(EventTypeSessionRevoked)
 
 	return e
 }
@@ -71,10 +71,10 @@ func (e *SessionRevokedEvent) UnmarshalJSON(data []byte) error {
 
 	if err := json.Unmarshal(data, &payload); err != nil {
 		return event.NewError(event.ErrCodeParseError,
-			"failed to parse session revoked event data", "")
+			"failed to parse session revoked event data", "", err.Error())
 	}
 
-	e.SetType(SessionRevoked)
+	e.SetType(EventTypeSessionRevoked)
 
 	e.Metadata = payload.EventMetadata
 
@@ -85,12 +85,12 @@ func ParseSessionRevokedEvent(data []byte) (event.Event, error) {
 	var e SessionRevokedEvent
 	if err := json.Unmarshal(data, &e); err != nil {
 		return nil, event.NewError(event.ErrCodeParseError,
-			"failed to parse session revoked event", "")
+			"failed to parse session revoked event", "", err.Error())
 	}
 
 	return &e, nil
 }
 
 func init() {
-	event.RegisterEventParser(SessionRevoked, ParseSessionRevokedEvent)
+	event.RegisterEventParser(EventTypeSessionRevoked, ParseSessionRevokedEvent)
 }

@@ -37,7 +37,7 @@ func (i InitiatingEntity) MarshalJSON() ([]byte, error) {
 func (i *InitiatingEntity) UnmarshalJSON(data []byte) error {
 	str := string(data)
 	if len(str) < 2 || str[0] != '"' || str[len(str)-1] != '"' {
-		return event.NewError(event.ErrCodeInvalidFormat, "initiating entity must be a string", "initiating_entity")
+		return event.NewError(event.ErrCodeInvalidFormat, "initiating entity must be a string", "initiating_entity", "")
 	}
 
 	// Remove quotes
@@ -53,7 +53,7 @@ func (i *InitiatingEntity) UnmarshalJSON(data []byte) error {
 	case "system":
 		*i = InitiatingEntitySystem
 	default:
-		return event.NewError(event.ErrCodeInvalidValue, "invalid initiating entity value", "initiating_entity")
+		return event.NewError(event.ErrCodeInvalidValue, "invalid initiating entity value", "initiating_entity", "")
 	}
 
 	return nil
@@ -157,7 +157,8 @@ func (m *EventMetadata) Validate() error {
 	if m.EventTimestamp != nil && *m.EventTimestamp < 0 {
 		return event.NewError(event.ErrCodeInvalidValue,
 			"event timestamp cannot be negative",
-			"event_timestamp")
+			"event_timestamp",
+			"")
 	}
 
 	return nil

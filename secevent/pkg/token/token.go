@@ -1,4 +1,4 @@
-package builder
+package token
 
 import (
 	"encoding/json"
@@ -22,7 +22,7 @@ type MultiSecEvent struct {
 	TransactionID *string `json:"txn,omitempty"` // OPTIONAL
 }
 
-func newMultiSecEvent() *MultiSecEvent {
+func NewMultiSecEvent() *MultiSecEvent {
 	return &MultiSecEvent{
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt: jwt.NewNumericDate(time.Now()),
@@ -176,7 +176,7 @@ type SecEvent struct {
 	TransactionID *string `json:"txn,omitempty"` // OPTIONAL
 }
 
-func newSecEvent() *SecEvent {
+func NewSecEvent() *SecEvent {
 	return &SecEvent{
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt: jwt.NewNumericDate(time.Now()),

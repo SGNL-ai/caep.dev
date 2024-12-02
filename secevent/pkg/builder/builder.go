@@ -2,6 +2,7 @@ package builder
 
 import (
 	"github.com/sgnl-ai/caep.dev/secevent/pkg/id"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/token"
 )
 
 // Builder provides configuration for creating SecEvents
@@ -42,8 +43,8 @@ func NewBuilder(opts ...Option) *Builder {
 }
 
 // NewMultiSecEvent creates a new multi-event SecEvent with default configurations
-func (b *Builder) NewMultiSecEvent() *MultiSecEvent {
-	secEvent := newMultiSecEvent()
+func (b *Builder) NewMultiSecEvent() *token.MultiSecEvent {
+	secEvent := token.NewMultiSecEvent()
 	if b.defaultIssuer != "" {
 		secEvent.WithIssuer(b.defaultIssuer)
 	}
@@ -56,8 +57,8 @@ func (b *Builder) NewMultiSecEvent() *MultiSecEvent {
 }
 
 // NewSecEvent creates a new single-event SecEvent with default configurations
-func (b *Builder) NewSecEvent() *SecEvent {
-	secEvent := newSecEvent()
+func (b *Builder) NewSecEvent() *token.SecEvent {
+	secEvent := token.NewSecEvent()
 	if b.defaultIssuer != "" {
 		secEvent.WithIssuer(b.defaultIssuer)
 	}

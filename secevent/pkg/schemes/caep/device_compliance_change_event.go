@@ -35,7 +35,7 @@ func NewDeviceComplianceChangeEvent(
 		},
 	}
 
-	e.SetType(DeviceComplianceChange)
+	e.SetType(EventTypeDeviceComplianceChange)
 
 	return e
 }
@@ -53,19 +53,19 @@ func (e *DeviceComplianceChangeEvent) Validate() error {
 	if !validStatuses[e.CurrentStatus] {
 		return event.NewError(event.ErrCodeInvalidValue,
 			fmt.Sprintf("invalid current status: %s", e.CurrentStatus),
-			"current_status")
+			"current_status", "")
 	}
 
 	if !validStatuses[e.PreviousStatus] {
 		return event.NewError(event.ErrCodeInvalidValue,
 			fmt.Sprintf("invalid previous status: %s", e.PreviousStatus),
-			"previous_status")
+			"previous_status", "")
 	}
 
 	if e.CurrentStatus == e.PreviousStatus {
 		return event.NewError(event.ErrCodeInvalidValue,
 			"current and previous status must be different",
-			"status")
+			"status", "")
 	}
 
 	return nil
@@ -99,10 +99,10 @@ func (e *DeviceComplianceChangeEvent) UnmarshalJSON(data []byte) error {
 
 	if err := json.Unmarshal(data, &payload); err != nil {
 		return event.NewError(event.ErrCodeParseError,
-			"failed to parse device compliance change event data", "")
+			"failed to parse device compliance change event data", "", err.Error())
 	}
 
-	e.SetType(DeviceComplianceChange)
+	e.SetType(EventTypeDeviceComplianceChange)
 
 	e.DeviceComplianceChangePayload = payload.DeviceComplianceChangePayload
 	e.Metadata = payload.EventMetadata
@@ -134,16 +134,24 @@ func (e *DeviceComplianceChangeEvent) WithReasonUser(language, reason string) *D
 	return e
 }
 
+func (e *DeviceComplianceChangeEvent) GetCurrentStatus() ComplianceStatus {
+    return e.CurrentStatus
+}
+
+func (e *DeviceComplianceChangeEvent) GetPreviousStatus() ComplianceStatus {
+    return e.PreviousStatus
+}
+
 func ParseDeviceComplianceChangeEvent(data []byte) (event.Event, error) {
 	var e DeviceComplianceChangeEvent
 	if err := json.Unmarshal(data, &e); err != nil {
 		return nil, event.NewError(event.ErrCodeParseError,
-			"failed to parse device compliance change event", "")
+			"failed to parse device compliance change event", "", err.Error())
 	}
 
 	return &e, nil
 }
 
 func init() {
-	event.RegisterEventParser(DeviceComplianceChange, ParseDeviceComplianceChangeEvent)
+	event.RegisterEventParser(EventTypeDeviceComplianceChange, ParseDeviceComplianceChangeEvent)
 }

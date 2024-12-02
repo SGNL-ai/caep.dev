@@ -73,6 +73,7 @@ func ParseEvent(eventType EventType, data []byte) (Event, error) {
 			ErrCodeInvalidEventType,
 			fmt.Sprintf("no parser registered for event type: %s", eventType),
 			"event_type",
+			"",
 		)
 	}
 
@@ -81,6 +82,7 @@ func ParseEvent(eventType EventType, data []byte) (Event, error) {
 		return nil, NewError(
 			ErrCodeParseError,
 			"invalid JSON data",
+			"",
 			"",
 		)
 	}
@@ -98,6 +100,7 @@ func ParseEvent(eventType EventType, data []byte) (Event, error) {
 			fmt.Sprintf("parsed event type %s does not match expected type %s",
 				event.Type(), eventType),
 			"event_type",
+			"",
 		)
 	}
 

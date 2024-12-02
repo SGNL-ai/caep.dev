@@ -22,22 +22,33 @@ type EventError struct {
 	Code    ErrorCode
 	Message string
 	Field   string
+	Details string
 }
 
 // Error returns the string representation of the error
 func (e *EventError) Error() string {
+	if e.Field != "" && e.Details != "" {
+		return fmt.Sprintf("%s: %s (field: %s, details: %s)", e.Code, e.Message, e.Field, e.Details)
+	}
+
 	if e.Field != "" {
 		return fmt.Sprintf("%s: %s (field: %s)", e.Code, e.Message, e.Field)
+	}
+
+	if e.Details != "" {
+		return fmt.Sprintf("%s: %s (details: %s)", e.Code, e.Message, e.Details)
 	}
 
 	return fmt.Sprintf("%s: %s", e.Code, e.Message)
 }
 
-// NewError creates a new EventError
-func NewError(code ErrorCode, msg string, field string) error {
-	return &EventError{
+func NewError(code ErrorCode, msg string, field string, details string) error {
+	err := &EventError{
 		Code:    code,
 		Message: msg,
 		Field:   field,
+		Details: details,
 	}
+
+	return err
 }

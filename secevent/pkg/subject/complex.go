@@ -308,3 +308,68 @@ func (s *ComplexSubjectImpl) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (s *ComplexSubjectImpl) Payload() (map[string]interface{}, error) {
+    payload := map[string]interface{}{
+        "format": string(s.format),
+    }
+
+    // Include components if they are not nil
+    if s.user != nil {
+        userPayload, err := s.user.Payload()
+        if err != nil {
+            return nil, fmt.Errorf("failed to get user payload: %w", err)
+        }
+        payload["user"] = userPayload
+    }
+
+    if s.device != nil {
+        devicePayload, err := s.device.Payload()
+        if err != nil {
+            return nil, fmt.Errorf("failed to get device payload: %w", err)
+        }
+        payload["device"] = devicePayload
+    }
+
+    if s.session != nil {
+        sessionPayload, err := s.session.Payload()
+        if err != nil {
+            return nil, fmt.Errorf("failed to get session payload: %w", err)
+        }
+        payload["session"] = sessionPayload
+    }
+
+    if s.application != nil {
+        appPayload, err := s.application.Payload()
+        if err != nil {
+            return nil, fmt.Errorf("failed to get application payload: %w", err)
+        }
+        payload["application"] = appPayload
+    }
+
+    if s.tenant != nil {
+        tenantPayload, err := s.tenant.Payload()
+        if err != nil {
+            return nil, fmt.Errorf("failed to get tenant payload: %w", err)
+        }
+        payload["tenant"] = tenantPayload
+    }
+
+    if s.orgUnit != nil {
+        orgUnitPayload, err := s.orgUnit.Payload()
+        if err != nil {
+            return nil, fmt.Errorf("failed to get org unit payload: %w", err)
+        }
+        payload["org_unit"] = orgUnitPayload
+    }
+
+    if s.group != nil {
+        groupPayload, err := s.group.Payload()
+        if err != nil {
+            return nil, fmt.Errorf("failed to get group payload: %w", err)
+        }
+        payload["group"] = groupPayload
+    }
+
+    return payload, nil
+}

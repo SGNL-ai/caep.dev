@@ -44,7 +44,7 @@ func NewAssuranceLevelChangeEvent(currentLevel, previousLevel AssuranceLevel, di
 		},
 	}
 
-	e.SetType(AssuranceLevelChange)
+	e.SetType(EventTypeAssuranceLevelChange)
 
 	return e
 }
@@ -73,6 +73,18 @@ func (e *AssuranceLevelChangeEvent) WithReasonUser(language, reason string) *Ass
 	return e
 }
 
+func (e *AssuranceLevelChangeEvent) GetCurrentLevel() AssuranceLevel {
+    return e.CurrentLevel
+}
+
+func (e *AssuranceLevelChangeEvent) GetPreviousLevel() AssuranceLevel {
+    return e.PreviousLevel
+}
+
+func (e *AssuranceLevelChangeEvent) GetChangeDirection() ChangeDirection {
+    return e.ChangeDirection
+}
+
 func (e *AssuranceLevelChangeEvent) Validate() error {
 	if err := e.ValidateMetadata(); err != nil {
 		return err
@@ -87,25 +99,25 @@ func (e *AssuranceLevelChangeEvent) Validate() error {
 	if !validLevels[e.CurrentLevel] {
 		return event.NewError(event.ErrCodeInvalidValue,
 			fmt.Sprintf("invalid current level: %s", e.CurrentLevel),
-			"current_level")
+			"current_level", "")
 	}
 
 	if !validLevels[e.PreviousLevel] {
 		return event.NewError(event.ErrCodeInvalidValue,
 			fmt.Sprintf("invalid previous level: %s", e.PreviousLevel),
-			"previous_level")
+			"previous_level", "")
 	}
 
 	if e.ChangeDirection != ChangeDirectionIncrease && e.ChangeDirection != ChangeDirectionDecrease {
 		return event.NewError(event.ErrCodeInvalidValue,
 			fmt.Sprintf("invalid change direction: %s", e.ChangeDirection),
-			"change_direction")
+			"change_direction", "")
 	}
 
 	if e.CurrentLevel == e.PreviousLevel {
 		return event.NewError(event.ErrCodeInvalidValue,
 			"current and previous levels must be different",
-			"levels")
+			"levels", "")
 	}
 
 	return nil
@@ -139,10 +151,10 @@ func (e *AssuranceLevelChangeEvent) UnmarshalJSON(data []byte) error {
 
 	if err := json.Unmarshal(data, &payload); err != nil {
 		return event.NewError(event.ErrCodeParseError,
-			"failed to parse assurance level change event data", "")
+			"failed to parse assurance level change event data", "", err.Error())
 	}
 
-	e.SetType(AssuranceLevelChange)
+	e.SetType(EventTypeAssuranceLevelChange)
 
 	e.AssuranceLevelChangePayload = payload.AssuranceLevelChangePayload
 	e.Metadata = payload.EventMetadata
@@ -154,12 +166,12 @@ func ParseAssuranceLevelChangeEvent(data []byte) (event.Event, error) {
 	var e AssuranceLevelChangeEvent
 	if err := json.Unmarshal(data, &e); err != nil {
 		return nil, event.NewError(event.ErrCodeParseError,
-			"failed to parse assurance level change event", "")
+			"failed to parse assurance level change event", "", err.Error())
 	}
 
 	return &e, nil
 }
 
 func init() {
-	event.RegisterEventParser(AssuranceLevelChange, ParseAssuranceLevelChangeEvent)
+	event.RegisterEventParser(EventTypeAssuranceLevelChange, ParseAssuranceLevelChangeEvent)
 }

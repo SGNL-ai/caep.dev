@@ -75,7 +75,8 @@ func (e *StreamUpdateEvent) Validate() error {
 	if !ValidateStreamStatus(e.Status) {
 		return event.NewError(event.ErrCodeInvalidValue,
 			"invalid stream status",
-			"status")
+			"status",
+			"")
 	}
 
 	return nil
@@ -93,7 +94,7 @@ func (e *StreamUpdateEvent) UnmarshalJSON(data []byte) error {
 	var payload StreamUpdatePayload
 	if err := json.Unmarshal(data, &payload); err != nil {
 		return event.NewError(event.ErrCodeParseError,
-			"failed to parse stream update event data", "")
+			"failed to parse stream update event data", "", err.Error())
 	}
 
 	e.SetType(EventTypeStreamUpdate)
@@ -107,7 +108,7 @@ func ParseStreamUpdateEvent(data []byte) (event.Event, error) {
 	var e StreamUpdateEvent
 	if err := json.Unmarshal(data, &e); err != nil {
 		return nil, event.NewError(event.ErrCodeParseError,
-			"failed to parse stream update event", "")
+			"failed to parse stream update event", "", err.Error())
 	}
 
 	return &e, nil

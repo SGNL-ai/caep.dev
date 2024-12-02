@@ -74,6 +74,13 @@ func (es *EmailSubject) Validate() error {
 	return nil
 }
 
+func (es *EmailSubject) Payload() (map[string]interface{}, error) {
+    return map[string]interface{}{
+        "format": string(es.format),
+        "email":  es.email,
+    }, nil
+}
+
 // PhoneSubject represents a subject identified by a phone number
 type PhoneSubject struct {
 	baseSimpleSubject
@@ -131,6 +138,13 @@ func (ps *PhoneSubject) Validate() error {
 	// TODO: Implement full E.164 validation
 
 	return nil
+}
+
+func (ps *PhoneSubject) Payload() (map[string]interface{}, error) {
+    return map[string]interface{}{
+        "format": string(ps.format),
+        "phone":  ps.phone,
+    }, nil
 }
 
 // IssuerSubSubject represents a subject identified by an issuer and subject pair
@@ -208,6 +222,14 @@ func (iss *IssuerSubSubject) Validate() error {
 	return nil
 }
 
+func (iss *IssuerSubSubject) Payload() (map[string]interface{}, error) {
+    return map[string]interface{}{
+        "format": string(iss.format),
+        "issuer": iss.issuer,
+        "sub":    iss.sub,
+    }, nil
+}
+
 // URISubject represents a subject identified by a URI
 type URISubject struct {
 	baseSimpleSubject
@@ -265,6 +287,13 @@ func (us *URISubject) Validate() error {
 	return nil
 }
 
+func (us *URISubject) Payload() (map[string]interface{}, error) {
+    return map[string]interface{}{
+        "format": string(us.format),
+        "uri":    us.uri,
+    }, nil
+}
+
 // OpaqueSubject represents a subject identified by an opaque identifier
 type OpaqueSubject struct {
 	baseSimpleSubject
@@ -320,6 +349,13 @@ func (os *OpaqueSubject) Validate() error {
 	}
 
 	return nil
+}
+
+func (os *OpaqueSubject) Payload() (map[string]interface{}, error) {
+    return map[string]interface{}{
+        "format": string(os.format),
+        "id":     os.id,
+    }, nil
 }
 
 // AccountSubject represents a subject identified by an acct URI
@@ -388,6 +424,13 @@ func (as *AccountSubject) Validate() error {
 	return nil
 }
 
+func (as *AccountSubject) Payload() (map[string]interface{}, error) {
+    return map[string]interface{}{
+        "format": string(as.format),
+        "uri":    as.uri,
+    }, nil
+}
+
 // DIDSubject represents a subject identified by a DID URL
 type DIDSubject struct {
 	baseSimpleSubject
@@ -448,6 +491,13 @@ func (ds *DIDSubject) Validate() error {
 	}
 
 	return nil
+}
+
+func (ds *DIDSubject) Payload() (map[string]interface{}, error) {
+    return map[string]interface{}{
+        "format": string(ds.format),
+        "url":    ds.url,
+    }, nil
 }
 
 // JWTIDSubject represents a subject identified by JWT issuer and ID
@@ -525,6 +575,14 @@ func (js *JWTIDSubject) Validate() error {
 	return nil
 }
 
+func (js *JWTIDSubject) Payload() (map[string]interface{}, error) {
+    return map[string]interface{}{
+        "format": string(js.format),
+        "iss":    js.iss,
+        "jti":    js.jti,
+    }, nil
+}
+
 // SAMLIDSubject represents a subject identified by SAML assertion issuer and ID
 type SAMLIDSubject struct {
 	baseSimpleSubject
@@ -598,4 +656,12 @@ func (ss *SAMLIDSubject) Validate() error {
 	}
 
 	return nil
+}
+
+func (ss *SAMLIDSubject) Payload() (map[string]interface{}, error) {
+    return map[string]interface{}{
+        "format":       string(ss.format),
+        "issuer":       ss.issuer,
+        "assertion_id": ss.assertionID,
+    }, nil
 }

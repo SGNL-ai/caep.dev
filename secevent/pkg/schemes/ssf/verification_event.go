@@ -54,7 +54,7 @@ func (e *VerificationEvent) UnmarshalJSON(data []byte) error {
 	var payload VerificationPayload
 	if err := json.Unmarshal(data, &payload); err != nil {
 		return event.NewError(event.ErrCodeParseError,
-			"failed to parse verification event data", "")
+			"failed to parse verification event data", "", err.Error())
 	}
 
 	e.SetType(EventTypeVerification)
@@ -68,7 +68,7 @@ func ParseVerificationEvent(data []byte) (event.Event, error) {
 	var e VerificationEvent
 	if err := json.Unmarshal(data, &e); err != nil {
 		return nil, event.NewError(event.ErrCodeParseError,
-			"failed to parse verification event", "")
+			"failed to parse verification event", "", err.Error())
 	}
 
 	return &e, nil

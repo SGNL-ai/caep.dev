@@ -22,7 +22,7 @@ func NewTokenClaimsChangeEvent() *TokenClaimsChangeEvent {
 		},
 	}
 
-	e.SetType(TokenClaimsChange)
+	e.SetType(EventTypeTokenClaimsChange)
 
 	return e
 }
@@ -41,7 +41,8 @@ func (e *TokenClaimsChangeEvent) Validate() error {
 	if len(e.Claims) == 0 {
 		return event.NewError(event.ErrCodeMissingValue,
 			"claims are required and must not be empty",
-			"claims")
+			"claims",
+			"")
 	}
 
 	return nil
@@ -75,10 +76,10 @@ func (e *TokenClaimsChangeEvent) UnmarshalJSON(data []byte) error {
 
 	if err := json.Unmarshal(data, &payload); err != nil {
 		return event.NewError(event.ErrCodeParseError,
-			"failed to parse token claims change event data", "")
+			"failed to parse token claims change event data", "", err.Error())
 	}
 
-	e.SetType(TokenClaimsChange)
+	e.SetType(EventTypeTokenClaimsChange)
 
 	e.TokenClaimsChangePayload = payload.TokenClaimsChangePayload
 	e.Metadata = payload.EventMetadata
@@ -110,16 +111,20 @@ func (e *TokenClaimsChangeEvent) WithReasonUser(language, reason string) *TokenC
 	return e
 }
 
+func (e *TokenClaimsChangeEvent) GetClaims() map[string]interface{} {
+    return e.Claims
+}
+
 func ParseTokenClaimsChangeEvent(data []byte) (event.Event, error) {
 	var e TokenClaimsChangeEvent
 	if err := json.Unmarshal(data, &e); err != nil {
 		return nil, event.NewError(event.ErrCodeParseError,
-			"failed to parse token claims change event", "")
+			"failed to parse token claims change event", "", err.Error())
 	}
 
 	return &e, nil
 }
 
 func init() {
-	event.RegisterEventParser(TokenClaimsChange, ParseTokenClaimsChangeEvent)
+	event.RegisterEventParser(EventTypeTokenClaimsChange, ParseTokenClaimsChangeEvent)
 }
