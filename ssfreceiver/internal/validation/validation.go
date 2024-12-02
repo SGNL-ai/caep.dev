@@ -56,9 +56,9 @@ func ValidateConfigurationMatch(received *types.StreamConfiguration, requested *
 
 	// For push delivery, endpoint URL is critical - return error if mismatched
 	if requested.Delivery.Method == types.DeliveryMethodPush {
-		if received.Delivery.EndpointURL != requested.Delivery.EndpointURL {
+		if received.Delivery.EndpointURL.String() != requested.Delivery.EndpointURL.String() {
 			return fmt.Errorf("endpoint URL mismatch: received %s, requested %s",
-				received.Delivery.EndpointURL, requested.Delivery.EndpointURL)
+				received.Delivery.EndpointURL.String(), requested.Delivery.EndpointURL.String())
 		}
 	}
 

@@ -11,6 +11,7 @@ A Go library for implementing [Shared Signals Framework (SSF)](https://openid.gi
   - [Authorization Setup](#authorization-setup)
   - [Poll-Based Stream](#poll-based-stream)
   - [Push-Based Stream](#push-based-stream)
+- [Examples](#examples)
 - [Stream Management](#stream-management)
   - [Stream Creation](#stream-creation)
   - [Stream Configuration](#stream-configuration)
@@ -51,7 +52,7 @@ This library requires:
 ## Installation
 
 ```bash
-go get github.com/caep.dev-receiver/ssfreceiver
+go get github.com/sgnl-ai/caep.dev/ssfreceiver
 ```
 
 ## Quick Start
@@ -64,17 +65,17 @@ First, set up your authorization method:
 package main
 
 import (
-    "github.com/caep.dev-receiver/ssfreceiver/auth"
+    "github.com/sgnl-ai/caep.dev/ssfreceiver/auth"
     "golang.org/x/oauth2/clientcredentials"
 )
 
-// Bearer token authentication
+// 1. Bearer token authentication
 bearerAuth, err := auth.NewBearer("token")
 if err != nil {
     // Handle error
 }
 
-// OAuth2 client credentials
+// 2. OAuth2 client credentials
 oauth2Auth, err := auth.NewOAuth2ClientCredentials(&clientcredentials.Config{
     ClientID:     "client_id",
     ClientSecret: "client_secret",
@@ -85,7 +86,7 @@ if err != nil {
     // Handle error
 }
 
-// Custom authorization implementation
+// 3. Custom authorization implementation
 type CustomAuth struct {
     // Custom auth fields
 }
@@ -108,83 +109,96 @@ customAuth := &CustomAuth{}
 package main
 
 import (
-    "context"
-    "log"
-    "github.com/caep.dev-receiver/ssfreceiver/builder"
-    "github.com/caep.dev-receiver/ssfreceiver/options"
-    "github.com/sgnl-ai/caep.dev/secevent/pkg/subject"
-    "github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep"
-    "github.com/sgnl-ai/caep.dev/secevent/pkg/event"
+	"context"
+	"log"
+	"time"
+
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/event"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/parser"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/ssf"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/auth"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/builder"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/options"
 )
 
 func main() {
-    // Create a stream builder
-    streamBuilder, err := builder.New(
-        "https://transmitter.example.com/.well-known/ssf-configuration",
-        builder.WithPollDelivery(),
-        builder.WithAuth(bearerAuth),
-        builder.WithEventTypes([]event.EventType{
-            caep.EventTypeSessionRevoked,      
-            caep.EventTypeTokenClaimsChange,
-            event.EventType("https://custom.example.com/events/custom"),
-        }),
-        builder.WithExistingCheck(),              // Optional, checks for existing streams
-    )
-    if err != nil {
-        // Handle error
-    }
+	bearerAuth, err := auth.NewBearer("your-token-here")
+	if err != nil {
+		log.Fatalf("Failed to create bearer auth: %v", err)
+	}
 
-    // Setup stream
-    ssfStream, err := streamBuilder.Setup(context.Background())
-    if err != nil {
-        // Handle error
-    }
+	streamBuilder, err := builder.New(
+		"https://transmitter.example.com/.well-known/ssf-configuration", // transmitter's metadata url
+		builder.WithPollDelivery(),
+		builder.WithAuth(bearerAuth),
+		builder.WithEventTypes([]event.EventType{
+			caep.EventTypeSessionRevoked,
+		}),
+		builder.WithExistingCheck(), // retrive existing stream if exist
+	)
+	if err != nil {
+		log.Fatalf("Failed to create stream builder: %v", err)
+	}
 
-    defer ssfStream.Disable(context.Background())
+	log.Printf("Setting up stream connection...")
 
-    emailSubject, err := subject.NewEmailSubject("user@example.com")
-    if err != nil {
-        // Handle error
-    }
+	stream, err := streamBuilder.Setup(context.Background())
+	if err != nil {
+		log.Fatalf("Failed to setup stream: %v", err)
+	}
 
-    err = ssfStream.AddSubject(context.Background(), 
-        emailSubject,
-        options.WithAuth(customAuth), // Optional, overrides stream's default auth for this request
-    )
-    if err != nil {
-        // Handle error
-    }
+	log.Printf("Stream setup completed successfully")
 
-    // Poll for events with all available options
-    events, err := ssfStream.Poll(context.Background(),
-        options.WithMaxEvents(10),          // Optional, default is 100
-        options.WithAutoAck(true),          // Optional, immediately auto acknowledges received events
-        options.WithAckJTIs([]string{"jti-1", "jti-2"}), // Optional, acknowledges specified events
-        options.WithAuth(customAuth),       // Optional, overrides stream's default auth for this request
-        options.WithHeaders(map[string]string{  // Optional, adds additional headers or overrides headers for this request
-            "Custom-Header": "value",
-        }),
-    )
-    if err != nil {
-        // Handle error
-    }
+	// Initialize SEC event parser
+	secEventParser := parser.NewParser()
 
-    // Process events using secevent parser
-    secEventParser := parser.NewParser(
-        parser.WithJWKSURL("https://issuer.example.com/jwks.json"),
-        parser.WithExpectedIssuer("https://issuer.example.com"),
-        parser.WithExpectedAudience("https://receiver.example.com"),
-    )
+	for {
+		log.Printf("Polling for new events...")
 
-    for _, rawEvent := range events {
-        parsedEvent, err := secEventParser.ParseSecEvent(rawEvent)
-        if err != nil {
-            // Handle error
-            continue
-        }
-        
-        handleEvent(parsedEvent)
-    }
+		rawEventTokens, err := stream.Poll(context.Background(),
+			options.WithMaxEvents(10),
+			options.WithAutoAck(true),
+		)
+		if err != nil {
+			log.Fatalf("Failed to poll events: %v", err)
+		}
+
+		for jti, rawEventToken := range rawEventTokens {
+			log.Printf("Processing event with JTI: %s", jti)
+			// Note: ParseSecEventNoVerify do not verify the signature and claims of the SecEvent.
+			// In production setting, use ParseSecEvent
+			secEvent, err := secEventParser.ParseSecEventNoVerify(rawEventToken)
+			if err != nil {
+				log.Printf("Failed to parse event %s: %v", jti, err)
+
+				continue
+			}
+
+			switch secEvent.Event.Type() {
+			case caep.EventTypeSessionRevoked:
+				log.Printf("Received session revoked event: %s", jti)
+
+				if subjectPayload, err := secEvent.Subject.Payload(); err == nil {
+					log.Printf("Subject details: %+v", subjectPayload)
+				} else {
+					log.Printf("Failed to get subject payload: %v", err)
+				}
+			case ssf.EventTypeVerification:
+				log.Printf("Received verification event: %s", jti)
+
+				if verificationEvent, ok := secEvent.Event.(*ssf.VerificationEvent); ok {
+					if state, exist := verificationEvent.GetState(); exist {
+						log.Printf("State: %s", state)
+					}
+				}
+			default:
+				log.Printf("Received unknown event type: %s", secEvent.Event.Type())
+			}
+		}
+
+		time.Sleep(time.Second * 3) // Poll interval
+	}
 }
 ```
 
@@ -194,61 +208,123 @@ func main() {
 package main
 
 import (
-    "context"
-    "net/http"
-    "github.com/caep.dev-receiver/ssfreceiver/builder"
-    "github.com/sgnl-ai/caep.dev/secevent/pkg/parser"
-    "github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep"
+	"context"
+	"io"
+	"log"
+	"net/http"
+
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/event"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/token"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/parser"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep"
+	"github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/ssf"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/auth"
+	"github.com/sgnl-ai/caep.dev/ssfreceiver/builder"
 )
 
 func main() {
-    // Create a stream builder
-    streamBuilder, err := builder.New(
-        "https://transmitter.example.com/.well-known/ssf-configuration",
-        builder.WithPushDelivery("https://receiver.example.com/events"),
-        builder.WithAuth(bearerAuth),
-        builder.WithEventTypes([]event.EventType{
-            caep.EventTypeSessionRevoked,      
-            caep.EventTypeTokenClaimsChange,
-            event.EventType("https://custom.example.com/events/custom"),
-        })
-    )
-    if err != nil {
-        // Handle error
-    }
+	bearerAuth, err := auth.NewBearer("your-token-here")
+	if err != nil {
+		log.Fatalf("Failed to create bearer auth: %v", err)
+	}
 
-    // Build and validate the stream
-    ssfStream, err := streamBuilder.Setup(context.Background())
-    if err != nil {
-        // Handle error
-    }
+	streamBuilder, err := builder.New(
+		"https://transmitter.example.com/.well-known/ssf-configuration", 	// transmitter's metadata url
+		builder.WithPushDelivery("https://receiver.example.com/events"), 	// event-delivery endpoint
+		builder.WithAuth(bearerAuth),
+		builder.WithEventTypes([]event.EventType{
+			caep.EventTypeSessionRevoked,
+		}),
+		builder.WithExistingCheck(),	// retrive existing stream if exist
+	)
+	if err != nil {
+		log.Fatalf("Failed to create stream builder: %v", err)
+	}
 
-    defer ssfStream.Disable(context.Background())
+	log.Printf("Setting up stream connection...")
+
+	stream, err := streamBuilder.Setup(context.Background())
+	if err != nil {
+		log.Fatalf("Failed to setup stream: %v", err)
+	}
+
+	log.Printf("Stream setup completed successfully. Stream ID: %s", stream.GetStreamID())
+}
+
+// HandlePushedEvent processes incoming events.
+// Use this in your event-delivery endpoint handler:
+//
+// http.HandleFunc("/events", HandlePushedEvent)
+func HandlePushedEvent(w http.ResponseWriter, r *http.Request) {
+	secEventParser := parser.NewParser()
+
+	// Read the request rawEventToken
+	rawEventToken, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Printf("Failed to read request body: %v", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	defer r.Body.Close()
+
+	// Note: ParseSecEventNoVerify do not verify the signature and claims of the SecEvent.
+	// In production setting, use ParseSecEvent
+	secEvent, err := secEventParser.ParseSecEventNoVerify(string(rawEventToken))
+	if err != nil {
+		log.Printf("Failed to parse event: %v", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	switch secEvent.Event.Type() {
+	case caep.EventTypeSessionRevoked:
+		handleSessionRevoked(secEvent)
+	case ssf.EventTypeVerification:
+		handleVerification(secEvent)
+	default:
+		log.Printf("Received unknown event type: %s", secEvent.Event.Type())
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func handleSessionRevoked(secEvent *token.SecEvent) {
+	log.Printf("Received session revoked event: %s", secEvent.ID)
+				
+	if subjectPayload, err := secEvent.Subject.Payload(); err == nil {
+		log.Printf("Subject details: %+v", subjectPayload)
+	} else {
+		log.Printf("Failed to get subject payload: %v", err)
+	}
+}
+
+func handleVerification(secEvent *token.SecEvent) {
+	log.Printf("Received verification event: %s", secEvent.ID)
+
+	if verificationEvent, ok := secEvent.Event.(*ssf.VerificationEvent); ok {
+		if state, exist := verificationEvent.GetState(); exist {
+			log.Printf("State: %s", state)
+		}
+	}
 }
 ```
 
-```go
-// Use secevent parser to parse incoming events
-secEventParser := parser.NewParser(
-    parser.WithJWKSURL("https://issuer.example.com/jwks.json"),
-    parser.WithExpectedIssuer("https://issuer.example.com"),
-    parser.WithExpectedAudience("https://receiver.example.com"),
-)
+## Examples
 
-// Push-endpoint(https://receiver.example.com/events) handler
-http.HandleFunc("/events", func(w http.ResponseWriter, r *http.Request) {
-    event, err := secEventParser.ParseSecEvent(r.Body)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        
-        return
-    }
-    
-    handleEvent(event)
+The `examples/` directory contains runnable examples demonstrating various aspects of the SSF receiver library:
 
-    w.WriteHeader(http.StatusOK)
-})
-```
+### Basic Examples
+
+- **Poll-Based Stream** (`examples/basic/poll_based.go`)
+- **Push-Based Stream** (`examples/basic/push_based.go`)
+
+### Advanced Examples
+
+- **Custom Auth** (`examples/advanced/custom_auth.go`)
+- **Subject Management** (`examples/advanced/subject_management.go`)
 
 ## Stream Management
 
@@ -595,7 +671,7 @@ import (
     "fmt"
     "net/http"
     "golang.org/x/oauth2/clientcredentials"
-    "github.com/caep.dev-receiver/ssfreceiver/auth"
+    "github.com/sgnl-ai/caep.dev/ssfreceiver/auth"
 )
 
 // 1. Built-in Bearer Token Authentication
