@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d12d5590-fb7c-4051-bb3a-a161a4621cf3",
+		"_postman_id": "461be22b-8f17-4fdf-b164-9459afe0e4e2",
 		"name": "CAEP.dev SSF APIs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "32728228"
@@ -46,7 +46,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"delivery\": {\n        \"method\": \"urn:ietf:rfc:8935\",\n        \"endpoint_url\": \"https://receiver.example.com/events\"\n    },\n    \"events_requested\": [\n        \"https://schemas.openid.net/secevent/caep/event-type/session-revoked\",\n        \"https://schemas.openid.net/secevent/caep/event-type/credential-change\",\n        \"https://schemas.openid.net/secevent/caep/event-type/device-compliance-change\",\n        \"https://schemas.openid.net/secevent/caep/event-type/token-claims-change\",\n        \"https://schemas.openid.net/secevent/caep/event-type/assurance-level-change\"\n    ],\n    \"description\": \"This field is optional. Remove this field if not needed.\"\n}",
+							"raw": "{\n    \"delivery\": {\n        \"method\": \"urn:ietf:rfc:8935\",\n        \"endpoint_url\": \"https://receiver.example.com/events\",\n        \"authorization_header\": \"<Authorization Header Value>\"\n    },\n    \"events_requested\": [\n        \"https://schemas.openid.net/secevent/caep/event-type/session-revoked\",\n        \"https://schemas.openid.net/secevent/caep/event-type/credential-change\",\n        \"https://schemas.openid.net/secevent/caep/event-type/device-compliance-change\",\n        \"https://schemas.openid.net/secevent/caep/event-type/token-claims-change\",\n        \"https://schemas.openid.net/secevent/caep/event-type/assurance-level-change\"\n    ],\n    \"description\": \"This field is optional. Remove this field if not needed.\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
