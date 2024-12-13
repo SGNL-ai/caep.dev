@@ -8,48 +8,48 @@ import (
 
 // TransmitterMetadata represents the configuration metadata for a Transmitter
 type TransmitterMetadata struct {
-	// SpecVersion identifies the implementer's draft or final specification
-	SpecVersion string `json:"spec_version,omitempty"`
+	// specVersion identifies the implementer's draft or final specification
+	specVersion string `json:"spec_version,omitempty"`
 
-	// Issuer is the URL using the HTTPS scheme with no query or fragment component
-	Issuer       *url.URL `json:"-"`
-	IssuerString string   `json:"issuer"`
+	// issuer is the URL using the HTTPS scheme with no query or fragment component
+	issuer       *url.URL `json:"-"`
+	issuerString string   `json:"issuer"`
 
-	// JWKSUri is the URL of the Transmitter's JSON Web Key Set document
-	JWKSUri       *url.URL `json:"-"`
-	JWKSUriString string   `json:"jwks_uri,omitempty"`
+	// jwksUri is the URL of the Transmitter's JSON Web Key Set document
+	jwksUri       *url.URL `json:"-"`
+	jwksUriString string   `json:"jwks_uri,omitempty"`
 
-	// DeliveryMethodsSupported is the list of supported delivery method URIs
-	DeliveryMethodsSupported []DeliveryMethod `json:"delivery_methods_supported,omitempty"`
+	// deliveryMethodsSupported is the list of supported delivery method URIs
+	deliveryMethodsSupported []DeliveryMethod `json:"delivery_methods_supported,omitempty"`
 
-	// ConfigurationEndpoint is the URL of the Configuration Endpoint
-	ConfigurationEndpoint       *url.URL `json:"-"`
-	ConfigurationEndpointString string   `json:"configuration_endpoint,omitempty"`
+	// configurationEndpoint is the URL of the Configuration Endpoint
+	configurationEndpoint       *url.URL `json:"-"`
+	configurationEndpointString string   `json:"configuration_endpoint,omitempty"`
 
-	// StatusEndpoint is the URL of the Status Endpoint
-	StatusEndpoint       *url.URL `json:"-"`
-	StatusEndpointString string   `json:"status_endpoint,omitempty"`
+	// statusEndpoint is the URL of the Status Endpoint
+	statusEndpoint       *url.URL `json:"-"`
+	statusEndpointString string   `json:"status_endpoint,omitempty"`
 
-	// AddSubjectEndpoint is the URL of the Add Subject Endpoint
-	AddSubjectEndpoint       *url.URL `json:"-"`
-	AddSubjectEndpointString string   `json:"add_subject_endpoint,omitempty"`
+	// addSubjectEndpoint is the URL of the Add Subject Endpoint
+	addSubjectEndpoint       *url.URL `json:"-"`
+	addSubjectEndpointString string   `json:"add_subject_endpoint,omitempty"`
 
-	// RemoveSubjectEndpoint is the URL of the Remove Subject Endpoint
-	RemoveSubjectEndpoint       *url.URL `json:"-"`
-	RemoveSubjectEndpointString string   `json:"remove_subject_endpoint,omitempty"`
+	// removeSubjectEndpoint is the URL of the Remove Subject Endpoint
+	removeSubjectEndpoint       *url.URL `json:"-"`
+	removeSubjectEndpointString string   `json:"remove_subject_endpoint,omitempty"`
 
-	// VerificationEndpoint is the URL of the Verification Endpoint
-	VerificationEndpoint       *url.URL `json:"-"`
-	VerificationEndpointString string   `json:"verification_endpoint,omitempty"`
+	// verificationEndpoint is the URL of the Verification Endpoint
+	verificationEndpoint       *url.URL `json:"-"`
+	verificationEndpointString string   `json:"verification_endpoint,omitempty"`
 
-	// CriticalSubjectMembers is an array of member names in a Complex Subject which must be interpreted
-	CriticalSubjectMembers []string `json:"critical_subject_members,omitempty"`
+	// criticalSubjectMembers is an array of member names in a Complex Subject which must be interpreted
+	criticalSubjectMembers []string `json:"critical_subject_members,omitempty"`
 
-	// AuthorizationSchemes specifies the supported authorization scheme properties
-	AuthorizationSchemes []AuthorizationScheme `json:"authorization_schemes,omitempty"`
+	// authorizationSchemes specifies the supported authorization scheme properties
+	authorizationSchemes []AuthorizationScheme `json:"authorization_schemes,omitempty"`
 
-	// DefaultSubjects indicates the default behavior of newly created streams
-	DefaultSubjects string `json:"default_subjects,omitempty"`
+	// defaultSubjects indicates the default behavior of newly created streams
+	defaultSubjects string `json:"default_subjects,omitempty"`
 }
 
 // AuthorizationScheme represents an authorization scheme supported by the Transmitter
@@ -59,55 +59,81 @@ type AuthorizationScheme struct {
 }
 
 func (m *TransmitterMetadata) UnmarshalJSON(data []byte) error {
-	type TempMetadata TransmitterMetadata
+	// Create a temporary struct with exported fields for JSON unmarshaling
+	var temp struct {
+		SpecVersion              string                `json:"spec_version,omitempty"`
+		Issuer                   string                `json:"issuer"`
+		JWKSUri                  string                `json:"jwks_uri,omitempty"`
+		DeliveryMethodsSupported []DeliveryMethod      `json:"delivery_methods_supported,omitempty"`
+		ConfigurationEndpoint    string                `json:"configuration_endpoint,omitempty"`
+		StatusEndpoint           string                `json:"status_endpoint,omitempty"`
+		AddSubjectEndpoint       string                `json:"add_subject_endpoint,omitempty"`
+		RemoveSubjectEndpoint    string                `json:"remove_subject_endpoint,omitempty"`
+		VerificationEndpoint     string                `json:"verification_endpoint,omitempty"`
+		CriticalSubjectMembers   []string              `json:"critical_subject_members,omitempty"`
+		AuthorizationSchemes     []AuthorizationScheme `json:"authorization_schemes,omitempty"`
+		DefaultSubjects          string                `json:"default_subjects,omitempty"`
+	}
 
-	var temp TempMetadata
 	if err := json.Unmarshal(data, &temp); err != nil {
 		return err
 	}
 
-	*m = TransmitterMetadata(temp)
+	// Copy the values to the actual struct
+	m.specVersion = temp.SpecVersion
+	m.issuerString = temp.Issuer
+	m.jwksUriString = temp.JWKSUri
+	m.deliveryMethodsSupported = temp.DeliveryMethodsSupported
+	m.configurationEndpointString = temp.ConfigurationEndpoint
+	m.statusEndpointString = temp.StatusEndpoint
+	m.addSubjectEndpointString = temp.AddSubjectEndpoint
+	m.removeSubjectEndpointString = temp.RemoveSubjectEndpoint
+	m.verificationEndpointString = temp.VerificationEndpoint
+	m.criticalSubjectMembers = temp.CriticalSubjectMembers
+	m.authorizationSchemes = temp.AuthorizationSchemes
+	m.defaultSubjects = temp.DefaultSubjects
 
 	var err error
 
-	if temp.IssuerString != "" {
-		if m.Issuer, err = url.Parse(temp.IssuerString); err != nil {
+	// Parse URLs
+	if temp.Issuer != "" {
+		if m.issuer, err = url.Parse(temp.Issuer); err != nil {
 			return fmt.Errorf("invalid issuer URL: %w", err)
 		}
 	}
 
-	if temp.JWKSUriString != "" {
-		if m.JWKSUri, err = url.Parse(temp.JWKSUriString); err != nil {
+	if temp.JWKSUri != "" {
+		if m.jwksUri, err = url.Parse(temp.JWKSUri); err != nil {
 			return fmt.Errorf("invalid JWKS URI: %w", err)
 		}
 	}
 
-	if temp.ConfigurationEndpointString != "" {
-		if m.ConfigurationEndpoint, err = url.Parse(temp.ConfigurationEndpointString); err != nil {
+	if temp.ConfigurationEndpoint != "" {
+		if m.configurationEndpoint, err = url.Parse(temp.ConfigurationEndpoint); err != nil {
 			return fmt.Errorf("invalid configuration endpoint URL: %w", err)
 		}
 	}
 
-	if temp.StatusEndpointString != "" {
-		if m.StatusEndpoint, err = url.Parse(temp.StatusEndpointString); err != nil {
+	if temp.StatusEndpoint != "" {
+		if m.statusEndpoint, err = url.Parse(temp.StatusEndpoint); err != nil {
 			return fmt.Errorf("invalid status endpoint URL: %w", err)
 		}
 	}
 
-	if temp.AddSubjectEndpointString != "" {
-		if m.AddSubjectEndpoint, err = url.Parse(temp.AddSubjectEndpointString); err != nil {
+	if temp.AddSubjectEndpoint != "" {
+		if m.addSubjectEndpoint, err = url.Parse(temp.AddSubjectEndpoint); err != nil {
 			return fmt.Errorf("invalid add subject endpoint URL: %w", err)
 		}
 	}
 
-	if temp.RemoveSubjectEndpointString != "" {
-		if m.RemoveSubjectEndpoint, err = url.Parse(temp.RemoveSubjectEndpointString); err != nil {
+	if temp.RemoveSubjectEndpoint != "" {
+		if m.removeSubjectEndpoint, err = url.Parse(temp.RemoveSubjectEndpoint); err != nil {
 			return fmt.Errorf("invalid remove subject endpoint URL: %w", err)
 		}
 	}
 
-	if temp.VerificationEndpointString != "" {
-		if m.VerificationEndpoint, err = url.Parse(temp.VerificationEndpointString); err != nil {
+	if temp.VerificationEndpoint != "" {
+		if m.verificationEndpoint, err = url.Parse(temp.VerificationEndpoint); err != nil {
 			return fmt.Errorf("invalid verification endpoint URL: %w", err)
 		}
 	}
@@ -116,43 +142,62 @@ func (m *TransmitterMetadata) UnmarshalJSON(data []byte) error {
 }
 
 func (m *TransmitterMetadata) MarshalJSON() ([]byte, error) {
-	type TempMetadata TransmitterMetadata
-
-	temp := TempMetadata(*m)
-
-	if m.Issuer != nil {
-		temp.IssuerString = m.Issuer.String()
+	// Create a temporary struct with exported fields for JSON marshaling
+	temp := struct {
+		SpecVersion              string                `json:"spec_version,omitempty"`
+		Issuer                   string                `json:"issuer"`
+		JWKSUri                  string                `json:"jwks_uri,omitempty"`
+		DeliveryMethodsSupported []DeliveryMethod      `json:"delivery_methods_supported,omitempty"`
+		ConfigurationEndpoint    string                `json:"configuration_endpoint,omitempty"`
+		StatusEndpoint           string                `json:"status_endpoint,omitempty"`
+		AddSubjectEndpoint       string                `json:"add_subject_endpoint,omitempty"`
+		RemoveSubjectEndpoint    string                `json:"remove_subject_endpoint,omitempty"`
+		VerificationEndpoint     string                `json:"verification_endpoint,omitempty"`
+		CriticalSubjectMembers   []string              `json:"critical_subject_members,omitempty"`
+		AuthorizationSchemes     []AuthorizationScheme `json:"authorization_schemes,omitempty"`
+		DefaultSubjects          string                `json:"default_subjects,omitempty"`
+	}{
+		SpecVersion:              m.specVersion,
+		DeliveryMethodsSupported: m.deliveryMethodsSupported,
+		CriticalSubjectMembers:   m.criticalSubjectMembers,
+		AuthorizationSchemes:     m.authorizationSchemes,
+		DefaultSubjects:          m.defaultSubjects,
 	}
 
-	if m.JWKSUri != nil {
-		temp.JWKSUriString = m.JWKSUri.String()
+	// Convert URLs to strings if they exist
+	if m.issuer != nil {
+		temp.Issuer = m.issuer.String()
 	}
 
-	if m.ConfigurationEndpoint != nil {
-		temp.ConfigurationEndpointString = m.ConfigurationEndpoint.String()
+	if m.jwksUri != nil {
+		temp.JWKSUri = m.jwksUri.String()
 	}
 
-	if m.StatusEndpoint != nil {
-		temp.StatusEndpointString = m.StatusEndpoint.String()
+	if m.configurationEndpoint != nil {
+		temp.ConfigurationEndpoint = m.configurationEndpoint.String()
 	}
 
-	if m.AddSubjectEndpoint != nil {
-		temp.AddSubjectEndpointString = m.AddSubjectEndpoint.String()
+	if m.statusEndpoint != nil {
+		temp.StatusEndpoint = m.statusEndpoint.String()
 	}
 
-	if m.RemoveSubjectEndpoint != nil {
-		temp.RemoveSubjectEndpointString = m.RemoveSubjectEndpoint.String()
+	if m.addSubjectEndpoint != nil {
+		temp.AddSubjectEndpoint = m.addSubjectEndpoint.String()
 	}
 
-	if m.VerificationEndpoint != nil {
-		temp.VerificationEndpointString = m.VerificationEndpoint.String()
+	if m.removeSubjectEndpoint != nil {
+		temp.RemoveSubjectEndpoint = m.removeSubjectEndpoint.String()
+	}
+
+	if m.verificationEndpoint != nil {
+		temp.VerificationEndpoint = m.verificationEndpoint.String()
 	}
 
 	return json.Marshal(temp)
 }
 
 func (m *TransmitterMetadata) Validate() error {
-	if m.Issuer == nil {
+	if m.issuer == nil {
 		return NewError(
 			ErrInvalidTransmitterMetadata,
 			"ValidateMetadata",
@@ -160,7 +205,7 @@ func (m *TransmitterMetadata) Validate() error {
 		)
 	}
 
-	if m.ConfigurationEndpoint == nil {
+	if m.configurationEndpoint == nil {
 		return NewError(
 			ErrInvalidTransmitterMetadata,
 			"ValidateMetadata",
@@ -168,7 +213,7 @@ func (m *TransmitterMetadata) Validate() error {
 		)
 	}
 
-	if len(m.DeliveryMethodsSupported) == 0 {
+	if len(m.deliveryMethodsSupported) == 0 {
 		return NewError(
 			ErrInvalidTransmitterMetadata,
 			"ValidateMetadata",
@@ -176,7 +221,7 @@ func (m *TransmitterMetadata) Validate() error {
 		)
 	}
 
-	if m.DefaultSubjects != "" && !IsValidDefaultSubjects(m.DefaultSubjects) {
+	if m.defaultSubjects != "" && !IsValidDefaultSubjects(m.defaultSubjects) {
 		return NewError(
 			ErrInvalidTransmitterMetadata,
 			"ValidateMetadata",
@@ -192,11 +237,125 @@ func IsValidDefaultSubjects(value string) bool {
 }
 
 func (m *TransmitterMetadata) SupportsDeliveryMethod(method DeliveryMethod) bool {
-	for _, supported := range m.DeliveryMethodsSupported {
+	for _, supported := range m.deliveryMethodsSupported {
 		if supported == method {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (m *TransmitterMetadata) GetSpecVersion() string {
+	return m.specVersion
+}
+
+func (m *TransmitterMetadata) GetIssuer() *url.URL {
+	if m.issuer == nil {
+		return nil
+	}
+
+	clone := *m.issuer
+
+	return &clone
+}
+
+func (m *TransmitterMetadata) GetJWKSUri() *url.URL {
+	if m.jwksUri == nil {
+		return nil
+	}
+
+	clone := *m.jwksUri
+
+	return &clone
+}
+
+func (m *TransmitterMetadata) GetDeliveryMethodsSupported() []DeliveryMethod {
+	if m.deliveryMethodsSupported == nil {
+		return nil
+	}
+
+	methods := make([]DeliveryMethod, len(m.deliveryMethodsSupported))
+
+	copy(methods, m.deliveryMethodsSupported)
+
+	return methods
+}
+
+func (m *TransmitterMetadata) GetConfigurationEndpoint() *url.URL {
+	if m.configurationEndpoint == nil {
+		return nil
+	}
+
+	clone := *m.configurationEndpoint
+
+	return &clone
+}
+
+func (m *TransmitterMetadata) GetStatusEndpoint() *url.URL {
+	if m.statusEndpoint == nil {
+		return nil
+	}
+
+	clone := *m.statusEndpoint
+
+	return &clone
+}
+
+func (m *TransmitterMetadata) GetAddSubjectEndpoint() *url.URL {
+	if m.addSubjectEndpoint == nil {
+		return nil
+	}
+
+	clone := *m.addSubjectEndpoint
+
+	return &clone
+}
+
+func (m *TransmitterMetadata) GetRemoveSubjectEndpoint() *url.URL {
+	if m.removeSubjectEndpoint == nil {
+		return nil
+	}
+
+	clone := *m.removeSubjectEndpoint
+
+	return &clone
+}
+
+func (m *TransmitterMetadata) GetVerificationEndpoint() *url.URL {
+	if m.verificationEndpoint == nil {
+		return nil
+	}
+
+	clone := *m.verificationEndpoint
+
+	return &clone
+}
+
+func (m *TransmitterMetadata) GetCriticalSubjectMembers() []string {
+	if m.criticalSubjectMembers == nil {
+		return nil
+	}
+
+	members := make([]string, len(m.criticalSubjectMembers))
+
+	copy(members, m.criticalSubjectMembers)
+
+	return members
+}
+
+func (m *TransmitterMetadata) GetAuthorizationSchemes() []AuthorizationScheme {
+	if m.authorizationSchemes == nil {
+		return nil
+	}
+
+	schemes := make([]AuthorizationScheme, len(m.authorizationSchemes))
+
+	copy(schemes, m.authorizationSchemes)
+
+	return schemes
+}
+
+func (m *TransmitterMetadata) GetDefaultSubjects() string {
+	return m.defaultSubjects
 }

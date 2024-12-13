@@ -20,7 +20,7 @@ func (s *stream) GetConfiguration(ctx context.Context, opts ...options.Option) (
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		fmt.Sprintf("%s?stream_id=%s", s.metadata.ConfigurationEndpoint.String(), s.streamID),
+		fmt.Sprintf("%s?stream_id=%s", s.metadata.GetConfigurationEndpoint().String(), s.streamID),
 		nil,
 	)
 	if err != nil {
@@ -74,7 +74,7 @@ func (s *stream) UpdateConfiguration(ctx context.Context, config *types.StreamCo
 		return nil, fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPut, s.metadata.ConfigurationEndpoint.String(), bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPut, s.metadata.GetConfigurationEndpoint().String(), bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -124,7 +124,7 @@ func (s *stream) GetStatus(ctx context.Context, opts ...options.Option) (*types.
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		fmt.Sprintf("%s?stream_id=%s", s.metadata.StatusEndpoint, s.streamID),
+		fmt.Sprintf("%s?stream_id=%s", s.metadata.GetStatusEndpoint().String(), s.streamID),
 		nil,
 	)
 	if err != nil {
@@ -198,7 +198,7 @@ func (s *stream) UpdateStatus(ctx context.Context, status types.StreamStatusType
 		return fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.metadata.StatusEndpoint.String(), bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.metadata.GetStatusEndpoint().String(), bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -236,7 +236,7 @@ func (s *stream) UpdateStatus(ctx context.Context, status types.StreamStatusType
 }
 
 func (s *stream) AddSubject(ctx context.Context, sub subject.Subject, opts ...options.Option) error {
-	if s.metadata.AddSubjectEndpoint == nil {
+	if s.metadata.GetAddSubjectEndpoint() == nil {
 		return fmt.Errorf("add subject endpoint is not configured")
 	}
 
@@ -257,7 +257,7 @@ func (s *stream) AddSubject(ctx context.Context, sub subject.Subject, opts ...op
 		return fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.metadata.AddSubjectEndpoint.String(), bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.metadata.GetAddSubjectEndpoint().String(), bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -295,7 +295,7 @@ func (s *stream) AddSubject(ctx context.Context, sub subject.Subject, opts ...op
 }
 
 func (s *stream) RemoveSubject(ctx context.Context, sub subject.Subject, opts ...options.Option) error {
-	if s.metadata.RemoveSubjectEndpoint == nil {
+	if s.metadata.GetRemoveSubjectEndpoint() == nil {
 		return fmt.Errorf("add subject endpoint is not configured")
 	}
 
@@ -315,7 +315,7 @@ func (s *stream) RemoveSubject(ctx context.Context, sub subject.Subject, opts ..
 		return fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.metadata.RemoveSubjectEndpoint.String(), bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.metadata.GetRemoveSubjectEndpoint().String(), bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -365,7 +365,7 @@ func (s *stream) Verify(ctx context.Context, opts ...options.Option) error {
 		return fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.metadata.VerificationEndpoint.String(), bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.metadata.GetVerificationEndpoint().String(), bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -408,7 +408,7 @@ func (s *stream) Delete(ctx context.Context, opts ...options.Option) error {
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodDelete,
-		fmt.Sprintf("%s?stream_id=%s", s.metadata.ConfigurationEndpoint, s.streamID),
+		fmt.Sprintf("%s?stream_id=%s", s.metadata.GetConfigurationEndpoint().String(), s.streamID),
 		nil,
 	)
 	if err != nil {

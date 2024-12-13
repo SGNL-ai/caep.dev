@@ -107,7 +107,7 @@ func (b *StreamBuilder) Setup(ctx context.Context) (stream.Stream, error) {
 }
 
 func (b *StreamBuilder) findExistingStream(ctx context.Context, metadata *types.TransmitterMetadata) (stream.Stream, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, metadata.ConfigurationEndpoint.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, metadata.GetConfigurationEndpoint().String(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -228,7 +228,7 @@ func (b *StreamBuilder) createNewStream(ctx context.Context, metadata *types.Tra
 		return nil, fmt.Errorf("failed to marshal configuration: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, metadata.ConfigurationEndpoint.String(), bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, metadata.GetConfigurationEndpoint().String(), bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
