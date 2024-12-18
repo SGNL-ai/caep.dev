@@ -49,29 +49,29 @@ func EventTypesMatch(a, b []event.EventType) bool {
 // ValidateConfigurationMatch validates if a received stream configuration matches the requested configuration
 func ValidateConfigurationMatch(received *types.StreamConfiguration, requested *types.StreamConfigurationRequest) error {
 	// Delivery method is critical - return error if mismatched
-	if received.Delivery.Method != requested.Delivery.Method {
+	if received.GetDeliveryMethod() != requested.Delivery.Method {
 		return fmt.Errorf("delivery method mismatch: received %s, requested %s",
-			received.Delivery.Method, requested.Delivery.Method)
+			received.GetDeliveryMethod(), requested.Delivery.Method)
 	}
 
 	// For push delivery, endpoint URL is critical - return error if mismatched
 	if requested.Delivery.Method == types.DeliveryMethodPush {
-		if received.Delivery.EndpointURL.String() != requested.Delivery.EndpointURL.String() {
+		if received.GetDeliveryEndpoint().String() != requested.Delivery.EndpointURL.String() {
 			return fmt.Errorf("endpoint URL mismatch: received %s, requested %s",
-				received.Delivery.EndpointURL.String(), requested.Delivery.EndpointURL.String())
+				received.GetDeliveryEndpoint().String(), requested.Delivery.EndpointURL.String())
 		}
 	}
 
 	// Log warning for event types mismatch
-	if !EventTypesMatch(received.EventsRequested, requested.EventsRequested) {
+	if !EventTypesMatch(received.GetEventsRequested(), requested.EventsRequested) {
 		log.Printf("WARNING: Event types mismatch - received: %v, requested: %v",
-			received.EventsRequested, requested.EventsRequested)
+			received.GetEventsRequested(), requested.EventsRequested)
 	}
 
 	// Log warning for description mismatch
-	if received.Description != requested.Description {
+	if received.GetDescription() != requested.Description {
 		log.Printf("WARNING: Description mismatch - received: %q, requested: %q",
-			received.Description, requested.Description)
+			received.GetDescription(), requested.Description)
 	}
 
 	return nil

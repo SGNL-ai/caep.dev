@@ -14,54 +14,6 @@ import (
 	"github.com/sgnl-ai/caep.dev/ssfreceiver/types"
 )
 
-func (s *stream) GetConfiguration(ctx context.Context, opts ...options.Option) (*types.StreamConfiguration, error) {
-	operationOpts := options.Apply(opts...)
-
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodGet,
-		fmt.Sprintf("%s?stream_id=%s", s.metadata.GetConfigurationEndpoint().String(), s.streamID),
-		nil,
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create request: %w", err)
-	}
-
-	// Add headers
-	for k, v := range s.getEndpointHeaders("configuration", operationOpts.Headers) {
-		req.Header.Set(k, v)
-	}
-
-	// Add authorization
-	if err := s.getAuthorizer(operationOpts).AddAuth(ctx, req); err != nil {
-		return nil, fmt.Errorf("failed to add authorization: %w", err)
-	}
-
-	operation := retry.Operation(func(ctx context.Context) (*http.Response, error) {
-		return s.httpClient.Do(req)
-	})
-
-	resp, err := retry.Do(ctx, operation, s.retryConfig)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get configuration: %w", err)
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-
-		return nil, fmt.Errorf("get-configuration request failed with status %d: %s", resp.StatusCode, string(body))
-	}
-
-	var config types.StreamConfiguration
-	if err := json.NewDecoder(resp.Body).Decode(&config); err != nil {
-		return nil, fmt.Errorf("failed to decode response: %w", err)
-	}
-
-	return &config, nil
-}
-
 func (s *stream) UpdateConfiguration(ctx context.Context, config *types.StreamConfigurationRequest, opts ...options.Option) (*types.StreamConfiguration, error) {
 	if err := config.ValidateRequest(); err != nil {
 		return nil, err
@@ -477,7 +429,7 @@ func (s *stream) doPoll(ctx context.Context, opts ...options.Option) (map[string
 		return nil, fmt.Errorf("failed to marshal request body: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.config.Delivery.EndpointURL.String(), bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.config.GetDeliveryEndpoint().String(), bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -550,7 +502,7 @@ func (s *stream) doAcknowledge(ctx context.Context, jtis []string, opts ...optio
 		return fmt.Errorf("failed to marshal request body: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.config.Delivery.EndpointURL.String(), bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.config.GetDeliveryEndpoint().String(), bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
