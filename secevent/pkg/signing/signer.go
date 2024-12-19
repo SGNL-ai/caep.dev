@@ -1,6 +1,7 @@
 package signing
 
 import (
+	"context"
 	"crypto"
 	"crypto/ecdsa"
 	"crypto/rsa"
@@ -11,7 +12,7 @@ import (
 
 // Signer defines the interface for signing tokens
 type Signer interface {
-	Sign(claims jwt.Claims) (string, error)
+	Sign(ctx context.Context, claims jwt.Claims) (string, error)
 }
 
 // DefaultSigner uses the user supplied private key to sign
@@ -57,7 +58,8 @@ func NewSigner(signingKey crypto.PrivateKey, opts ...SignerOption) (*DefaultSign
 	return signer, nil
 }
 
-func (s *DefaultSigner) Sign(claims jwt.Claims) (string, error) {
+func (s *DefaultSigner) Sign(ctx context.Context, claims jwt.Claims) (string, error) {
+	// ctx is unused in this implementation since signing is purely local and operation is fast
 	token := jwt.NewWithClaims(s.signingMethod, claims)
 
 	if s.keyID != nil {

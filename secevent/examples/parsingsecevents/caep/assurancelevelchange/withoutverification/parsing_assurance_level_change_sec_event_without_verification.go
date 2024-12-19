@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -154,7 +155,7 @@ func generateSignedAssuranceLevelChangeSecEvent(privateKey *ecdsa.PrivateKey) (s
 	}
 
 	// Sign the SecEvent
-	signedToken, err := signer.Sign(secEvent)
+	signedToken, err := signer.Sign(context.Background(), secEvent)
 	if err != nil {
 		return "", fmt.Errorf("failed to sign event: %w", err)
 	}
