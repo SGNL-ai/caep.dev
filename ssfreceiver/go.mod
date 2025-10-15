@@ -1,10 +1,10 @@
 module github.com/sgnl-ai/caep.dev/ssfreceiver
 
-go 1.22.0
+go 1.23.0
 
 require (
 	github.com/sgnl-ai/caep.dev/secevent v0.0.0-20241202180510-fa7f08427d5b
-	golang.org/x/oauth2 v0.24.0
+	golang.org/x/oauth2 v0.27.0
 )
 
 require (
@@ -18,6 +18,6 @@ require (
 	github.com/lestrrat-go/jwx/v2 v2.1.3 // indirect
 	github.com/lestrrat-go/option v1.0.1 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/crypto v0.35.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 )
