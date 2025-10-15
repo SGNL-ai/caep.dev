@@ -1159,10 +1159,6 @@ public class ApiClient {
                 };
                 SSLContext sslContext = SSLContext.getInstance("TLS");
                 trustManagers = new TrustManager[]{ trustAll };
-                hostnameVerifier = new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) { return true; }
-                };
             } else if (sslCaCert != null) {
                 char[] password = null; // Any password will work.
                 CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
