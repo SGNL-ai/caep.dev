@@ -219,5 +219,15 @@
     <maven-plugin-version>1.0.0</maven-plugin-version>
     <junit-version>4.13.1</junit-version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <com-squareup-okio.okio.version>1.17.6</com-squareup-okio.okio.version>
   </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.squareup.okio</groupId>
+        <artifactId>okio</artifactId>
+        <version>${com-squareup-okio.okio.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>
