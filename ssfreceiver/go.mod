@@ -4,7 +4,7 @@ go 1.25
 
 require (
 	github.com/sgnl-ai/caep.dev/secevent v0.0.0-20241202180510-fa7f08427d5b
-	golang.org/x/oauth2 v0.27.0
+	golang.org/x/oauth2 v0.33.0
 )
 
 require (
