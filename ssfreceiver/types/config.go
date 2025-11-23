@@ -43,34 +43,34 @@ func (s StringOrStringArray) MarshalJSON() ([]byte, error) {
 
 // StreamConfiguration represents the complete configuration for an SSF stream
 type StreamConfiguration struct {
-	// StreamID uniquely identifies the stream
-	StreamID string `json:"stream_id"`
+	// streamID uniquely identifies the stream
+	streamID string
 
-	// Issuer is the URL using the HTTPS scheme that the Transmitter asserts as its Issuer Identifier
-	Issuer       *url.URL `json:"-"`
-	IssuerString string   `json:"iss"`
+	// issuer is the URL using the HTTPS scheme that the Transmitter asserts as its issuer Identifier
+	issuer       *url.URL
+	issuerString string
 
-	// Audience contains audience claim that identifies the Event Receiver(s)
+	// audience contains audience claim that identifies the Event Receiver(s)
 	// Can be either a single string or an array of strings
-	Audience StringOrStringArray `json:"aud"`
+	audience StringOrStringArray
 
-	// Delivery contains configuration parameters for the SET delivery method
-	Delivery DeliveryConfig `json:"delivery"`
+	// delivery contains configuration parameters for the SET delivery method
+	delivery DeliveryConfig
 
-	// EventsSupported is the set of events supported by the Transmitter
-	EventsSupported []event.EventType `json:"events_supported,omitempty"`
+	// eventsSupported is the set of events supported by the Transmitter
+	eventsSupported []event.EventType
 
-	// EventsRequested is the set of events requested by the Receiver
-	EventsRequested []event.EventType `json:"events_requested,omitempty"`
+	// eventsRequested is the set of events requested by the Receiver
+	eventsRequested []event.EventType
 
-	// EventsDelivered is the set of events that the Transmitter will include in the stream
-	EventsDelivered []event.EventType `json:"events_delivered"`
+	// eventsDelivered is the set of events that the Transmitter will include in the stream
+	eventsDelivered []event.EventType
 
-	// MinVerificationInterval is the minimum amount of time in seconds between verification requests
-	MinVerificationInterval int `json:"min_verification_interval,omitempty"`
+	// minVerificationInterval is the minimum amount of time in seconds between verification requests
+	minVerificationInterval int
 
-	// Description describes the properties of the stream
-	Description string `json:"description,omitempty"`
+	// description describes the properties of the stream
+	description string
 }
 
 // StreamConfigurationRequest represents the request body for creating or updating a stream
@@ -131,18 +131,38 @@ func (d *DeliveryConfig) MarshalJSON() ([]byte, error) {
 }
 
 func (c *StreamConfiguration) UnmarshalJSON(data []byte) error {
-	type TempConfig StreamConfiguration
+	// Create a temporary struct with exported fields for JSON unmarshaling
+	var temp struct {
+		StreamID                string              `json:"stream_id"`
+		Issuer                  string              `json:"iss"`
+		Audience                StringOrStringArray `json:"aud"`
+		Delivery                DeliveryConfig      `json:"delivery"`
+		EventsSupported         []event.EventType   `json:"events_supported,omitempty"`
+		EventsRequested         []event.EventType   `json:"events_requested,omitempty"`
+		EventsDelivered         []event.EventType   `json:"events_delivered"`
+		MinVerificationInterval int                 `json:"min_verification_interval,omitempty"`
+		Description             string              `json:"description,omitempty"`
+	}
 
-	var temp TempConfig
 	if err := json.Unmarshal(data, &temp); err != nil {
 		return err
 	}
 
-	*c = StreamConfiguration(temp)
+	// Copy values to the actual struct
+	c.streamID = temp.StreamID
+	c.issuerString = temp.Issuer
+	c.audience = temp.Audience
+	c.delivery = temp.Delivery
+	c.eventsSupported = temp.EventsSupported
+	c.eventsRequested = temp.EventsRequested
+	c.eventsDelivered = temp.EventsDelivered
+	c.minVerificationInterval = temp.MinVerificationInterval
+	c.description = temp.Description
 
+	// Parse URL
 	var err error
-	if c.IssuerString != "" {
-		if c.Issuer, err = url.Parse(c.IssuerString); err != nil {
+	if temp.Issuer != "" {
+		if c.issuer, err = url.Parse(temp.Issuer); err != nil {
 			return fmt.Errorf("invalid issuer URL: %w", err)
 		}
 	}
@@ -151,19 +171,37 @@ func (c *StreamConfiguration) UnmarshalJSON(data []byte) error {
 }
 
 func (c *StreamConfiguration) MarshalJSON() ([]byte, error) {
-	type TempConfig StreamConfiguration
+	// Create a temporary struct with exported fields for JSON marshaling
+	temp := struct {
+		StreamID                string              `json:"stream_id"`
+		Issuer                  string              `json:"iss"`
+		Audience                StringOrStringArray `json:"aud"`
+		Delivery                DeliveryConfig      `json:"delivery"`
+		EventsSupported         []event.EventType   `json:"events_supported,omitempty"`
+		EventsRequested         []event.EventType   `json:"events_requested,omitempty"`
+		EventsDelivered         []event.EventType   `json:"events_delivered"`
+		MinVerificationInterval int                 `json:"min_verification_interval,omitempty"`
+		Description             string              `json:"description,omitempty"`
+	}{
+		StreamID:                c.streamID,
+		Audience:                c.audience,
+		Delivery:                c.delivery,
+		EventsSupported:         c.eventsSupported,
+		EventsRequested:         c.eventsRequested,
+		EventsDelivered:         c.eventsDelivered,
+		MinVerificationInterval: c.minVerificationInterval,
+		Description:             c.description,
+	}
 
-	temp := TempConfig(*c)
-
-	if c.Issuer != nil {
-		temp.IssuerString = c.Issuer.String()
+	if c.issuer != nil {
+		temp.Issuer = c.issuer.String()
 	}
 
 	return json.Marshal(temp)
 }
 
 func (c *StreamConfiguration) Validate() error {
-	if c.StreamID == "" {
+	if c.streamID == "" {
 		return NewError(
 			ErrInvalidConfiguration,
 			"ValidateConfig",
@@ -171,7 +209,7 @@ func (c *StreamConfiguration) Validate() error {
 		)
 	}
 
-	if c.Issuer == nil {
+	if c.issuer == nil {
 		return NewError(
 			ErrInvalidConfiguration,
 			"ValidateConfig",
@@ -179,7 +217,7 @@ func (c *StreamConfiguration) Validate() error {
 		)
 	}
 
-	if len(c.Audience) == 0 {
+	if len(c.audience) == 0 {
 		return NewError(
 			ErrInvalidConfiguration,
 			"ValidateConfig",
@@ -187,7 +225,7 @@ func (c *StreamConfiguration) Validate() error {
 		)
 	}
 
-	if err := c.Delivery.Validate(); err != nil {
+	if err := c.delivery.Validate(); err != nil {
 		return NewError(
 			err,
 			"ValidateConfig",
@@ -195,7 +233,7 @@ func (c *StreamConfiguration) Validate() error {
 		)
 	}
 
-	if len(c.EventsDelivered) == 0 {
+	if len(c.eventsDelivered) == 0 {
 		return NewError(
 			ErrInvalidConfiguration,
 			"ValidateConfig",
@@ -254,10 +292,88 @@ func (r *StreamConfigurationRequest) ValidateRequest() error {
 	return nil
 }
 
-func (d *DeliveryConfig) IsPollDelivery() bool {
-	return d.Method == DeliveryMethodPoll
+func (c *StreamConfiguration) GetStreamID() string {
+	return c.streamID
 }
 
-func (d *DeliveryConfig) IsPushDelivery() bool {
-	return d.Method == DeliveryMethodPush
+func (c *StreamConfiguration) GetIssuer() *url.URL {
+	if c.issuer == nil {
+		return nil
+	}
+
+	clone := *c.issuer
+
+	return &clone
+}
+
+func (c *StreamConfiguration) GetAudience() []string {
+	if c.audience == nil {
+		return nil
+	}
+
+	audience := make([]string, len(c.audience))
+
+	copy(audience, c.audience)
+
+	return audience
+}
+
+func (c *StreamConfiguration) GetDeliveryMethod() DeliveryMethod {
+	return c.delivery.Method
+}
+
+func (c *StreamConfiguration) GetDeliveryEndpoint() *url.URL {
+	return c.delivery.EndpointURL
+}
+
+func (c *StreamConfiguration) GetEventsSupported() []event.EventType {
+	if c.eventsSupported == nil {
+		return nil
+	}
+
+	events := make([]event.EventType, len(c.eventsSupported))
+
+	copy(events, c.eventsSupported)
+
+	return events
+}
+
+func (c *StreamConfiguration) GetEventsRequested() []event.EventType {
+	if c.eventsRequested == nil {
+		return nil
+	}
+
+	events := make([]event.EventType, len(c.eventsRequested))
+
+	copy(events, c.eventsRequested)
+
+	return events
+}
+
+func (c *StreamConfiguration) GetEventsDelivered() []event.EventType {
+	if c.eventsDelivered == nil {
+		return nil
+	}
+
+	events := make([]event.EventType, len(c.eventsDelivered))
+
+	copy(events, c.eventsDelivered)
+
+	return events
+}
+
+func (c *StreamConfiguration) GetMinVerificationInterval() int {
+	return c.minVerificationInterval
+}
+
+func (c *StreamConfiguration) GetDescription() string {
+	return c.description
+}
+
+func (c *StreamConfiguration) IsPollDelivery() bool {
+	return c.GetDeliveryMethod() == DeliveryMethodPoll
+}
+
+func (c *StreamConfiguration) IsPushDelivery() bool {
+	return c.GetDeliveryMethod() == DeliveryMethodPush
 }

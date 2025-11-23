@@ -20,7 +20,7 @@ type Stream interface {
 	GetMetadata() *types.TransmitterMetadata
 
 	// GetConfiguration returns the current stream configuration
-	GetConfiguration(ctx context.Context, opts ...options.Option) (*types.StreamConfiguration, error)
+	GetConfiguration() *types.StreamConfiguration
 
 	// UpdateConfiguration updates the stream configuration
 	UpdateConfiguration(ctx context.Context, config *types.StreamConfigurationRequest, opts ...options.Option) (*types.StreamConfiguration, error)
@@ -89,7 +89,7 @@ func NewStream(
 }
 
 func (s *stream) Poll(ctx context.Context, opts ...options.Option) (map[string]string, error) {
-	if s.config.Delivery.Method != types.DeliveryMethodPoll {
+	if !s.config.IsPollDelivery() {
 		return nil, types.NewError(
 			types.ErrOperationNotSupported,
 			"Poll",
@@ -101,7 +101,7 @@ func (s *stream) Poll(ctx context.Context, opts ...options.Option) (map[string]s
 }
 
 func (s *stream) Acknowledge(ctx context.Context, jtis []string, opts ...options.Option) error {
-	if s.config.Delivery.Method != types.DeliveryMethodPoll {
+	if !s.config.IsPollDelivery() {
 		return types.NewError(
 			types.ErrOperationNotSupported,
 			"Acknowledge",
@@ -120,16 +120,8 @@ func (s *stream) GetMetadata() *types.TransmitterMetadata {
 	return s.metadata
 }
 
-func (s *stream) GetDeliveryMethod() types.DeliveryMethod {
-	return s.config.Delivery.Method
-}
-
-func (s *stream) IsPollStream() bool {
-	return s.config.Delivery.Method == types.DeliveryMethodPoll
-}
-
-func (s *stream) IsPushStream() bool {
-	return s.config.Delivery.Method == types.DeliveryMethodPush
+func (s *stream) GetConfiguration() *types.StreamConfiguration {
+	return s.config
 }
 
 // getEndpointHeaders returns the headers for a specific endpoint

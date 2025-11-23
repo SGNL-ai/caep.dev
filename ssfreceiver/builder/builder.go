@@ -203,7 +203,7 @@ func handleStreamConfig(config *types.StreamConfiguration, b *StreamBuilder, met
 	}
 
 	return stream.NewStream(
-		config.StreamID,
+		config.GetStreamID(),
 		metadata,
 		config,
 		b.authorizer,
@@ -272,7 +272,7 @@ func (b *StreamBuilder) createNewStream(ctx context.Context, metadata *types.Tra
 	}
 
 	return stream.NewStream(
-		streamConfig.StreamID,
+		streamConfig.GetStreamID(),
 		metadata,
 		&streamConfig,
 		b.authorizer,

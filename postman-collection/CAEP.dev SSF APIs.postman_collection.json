@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "461be22b-8f17-4fdf-b164-9459afe0e4e2",
+		"_postman_id": "05a25eb5-9019-452d-8f1e-6774173c1ac4",
 		"name": "CAEP.dev SSF APIs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "32728228"
@@ -75,7 +75,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://ssf.caep.dev/ssf/stream?stream_id=<stream-id>",
+							"raw": "https://ssf.caep.dev/ssf/streams?stream_id=<stream-id>",
 							"protocol": "https",
 							"host": [
 								"ssf",
@@ -84,7 +84,7 @@
 							],
 							"path": [
 								"ssf",
-								"stream"
+								"streams"
 							],
 							"query": [
 								{
