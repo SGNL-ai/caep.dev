@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -50,7 +51,7 @@ func main() {
 	}
 
 	// Sign the SecEvent
-	signedToken, err := signer.Sign(secEvent)
+	signedToken, err := signer.Sign(context.Background(), secEvent)
 	if err != nil {
 		panic(err)
 	}

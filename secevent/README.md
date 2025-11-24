@@ -54,6 +54,7 @@ import (
     "crypto/rand"
     "fmt"
     "time"
+    "context"
 
     "github.com/sgnl-ai/caep.dev/secevent/pkg/schemes/caep"
     "github.com/sgnl-ai/caep.dev/secevent/pkg/builder"
@@ -98,7 +99,7 @@ func main() {
     }
 
     // Sign the SecEvent
-    signedToken, err := signer.Sign(secEvent)
+    signedToken, err := signer.Sign(context.Background(), secEvent)
     if err != nil {
         panic(err)
     }
@@ -328,6 +329,7 @@ import (
     "strings"
     "github.com/golang-jwt/jwt/v5"
     "github.com/sgnl-ai/caep.dev/secevent/pkg/signing"
+    "context"
 )
 
 // CustomSigner implements the Signer interface
@@ -335,7 +337,7 @@ type CustomSigner struct {
     // Fields for HSM client or external service configuration
 }
 
-func (s *CustomSigner) Sign(claims jwt.Claims) (string, error) {
+func (s *CustomSigner) Sign(ctx context.Context, claims jwt.Claims) (string, error) {
     // Create token with claims
     token := jwt.NewWithClaims(s.signingMethod, claims)
     
@@ -350,7 +352,7 @@ func (s *CustomSigner) Sign(claims jwt.Claims) (string, error) {
     }
     
     // Use your HSM or external service to sign the string
-    signature, err := externalSign(signingString)
+    signature, err := externalSign(ctx, signingString)
     if err != nil {
         return "", err
     }
@@ -360,7 +362,7 @@ func (s *CustomSigner) Sign(claims jwt.Claims) (string, error) {
 }
 
 // externalSign is a placeholder function representing the external signing process
-func externalSign(signingString string) (string, error) {
+func externalSign(ctx context.Context, signingString string) (string, error) {
     // Implement the signing logic using your HSM or external service
     return "signature", nil
 }
@@ -373,7 +375,7 @@ func main() {
         WithIssuer("https://issuer.example.com")
         // ... other SecEvent configuration
 
-    signedToken, err := customSigner.Sign(secEvent)
+    signedToken, err := customSigner.Sign(context.Background(), secEvent)
     if err != nil {
         panic(err)
     }
