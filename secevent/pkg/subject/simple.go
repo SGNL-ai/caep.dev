@@ -150,8 +150,8 @@ func (ps *PhoneSubject) Payload() (map[string]interface{}, error) {
 // IssuerSubSubject represents a subject identified by an issuer and subject pair
 type IssuerSubSubject struct {
 	baseSimpleSubject
-	issuer string
-	sub    string
+	iss string
+	sub string
 }
 
 func NewIssuerSubSubject(issuer, sub string) (*IssuerSubSubject, error) {
@@ -159,7 +159,7 @@ func NewIssuerSubSubject(issuer, sub string) (*IssuerSubSubject, error) {
 	sub = strings.TrimSpace(sub)
 
 	if issuer == "" {
-		return nil, NewError(ErrCodeMissingValue, "issuer is required", "issuer")
+		return nil, NewError(ErrCodeMissingValue, "issuer is required", "iss")
 	}
 
 	if sub == "" {
@@ -170,13 +170,13 @@ func NewIssuerSubSubject(issuer, sub string) (*IssuerSubSubject, error) {
 		baseSimpleSubject: baseSimpleSubject{
 			format: FormatIssuerSub,
 		},
-		issuer: issuer,
-		sub:    sub,
+		iss: issuer,
+		sub: sub,
 	}, nil
 }
 
 func (iss *IssuerSubSubject) Issuer() string {
-	return iss.issuer
+	return iss.iss
 }
 
 func (iss *IssuerSubSubject) Sub() string {
@@ -186,7 +186,7 @@ func (iss *IssuerSubSubject) Sub() string {
 func (iss *IssuerSubSubject) MarshalJSON() ([]byte, error) {
 	m := map[string]string{
 		"format": string(iss.format),
-		"issuer": iss.issuer,
+		"iss":    iss.iss,
 		"sub":    iss.sub,
 	}
 
@@ -204,15 +204,22 @@ func (iss *IssuerSubSubject) UnmarshalJSON(data []byte) error {
 	}
 
 	iss.format = FormatIssuerSub
-	iss.issuer = strings.TrimSpace(raw["issuer"])
+	// ISSUE-63: https://github.com/SGNL-ai/caep.dev/issues/63
+	// Parser expects issuer while transmitter sends iss for ISS Sub subject type
+	// RFC 9493 uses "iss"; accept "issuer" for backward compatibility.
+	if v := strings.TrimSpace(raw["iss"]); v != "" {
+		iss.iss = v
+	} else {
+		iss.iss = strings.TrimSpace(raw["issuer"])
+	}
 	iss.sub = strings.TrimSpace(raw["sub"])
 
 	return nil
 }
 
 func (iss *IssuerSubSubject) Validate() error {
-	if strings.TrimSpace(iss.issuer) == "" {
-		return NewError(ErrCodeMissingValue, "issuer is required", "issuer")
+	if strings.TrimSpace(iss.iss) == "" {
+		return NewError(ErrCodeMissingValue, "issuer is required", "iss")
 	}
 
 	if strings.TrimSpace(iss.sub) == "" {
@@ -225,7 +232,7 @@ func (iss *IssuerSubSubject) Validate() error {
 func (iss *IssuerSubSubject) Payload() (map[string]interface{}, error) {
     return map[string]interface{}{
         "format": string(iss.format),
-        "issuer": iss.issuer,
+        "iss":    iss.iss,
         "sub":    iss.sub,
     }, nil
 }
