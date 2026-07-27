@@ -35,14 +35,3 @@ updates:
       - "go"
 
   # GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-    open-pull-requests-limit: 5
-    cooldown:
-      default-days: 7
-    labels:
-      - "dependencies"
-      - "github-actions"
