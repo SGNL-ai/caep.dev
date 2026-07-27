@@ -1,10 +1,10 @@
 module github.com/sgnl-ai/caep.dev/ssfreceiver
 
-go 1.25
+go 1.25.0
 
 require (
 	github.com/sgnl-ai/caep.dev/secevent v0.0.0-20241202180510-fa7f08427d5b
-	golang.org/x/oauth2 v0.33.0
+	golang.org/x/oauth2 v0.36.0
 )
 
 require (
